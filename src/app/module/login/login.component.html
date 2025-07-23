@@ -1,0 +1,63 @@
+<section
+  class="fixed inset-0 z-50 flex flex-col md:flex-row h-screen font-body bg-[#f4f1ea] text-[#3e3020]"
+>
+  <!-- Left side: Logo and Welcome -->
+  <div
+    class="w-full md:w-1/2 flex flex-col justify-center items-center bg-[#e6dcc5] p-6"
+  >
+    <h1 class="text-4xl font-heading font-bold">Morse Monk</h1>
+    <p class="mt-2 text-lg italic">Welcome to the Family</p>
+  </div>
+
+  <!-- Right side: Login Form -->
+  <div
+    class="w-full md:w-1/2 flex flex-col justify-center items-center bg-white p-6"
+  >
+    <form
+      [formGroup]="normalForm"
+      class="w-full max-w-md space-y-4 bg-[#fdfaf4] p-8 rounded-lg shadow-lg"
+    >
+      <p class="text-sm">Please enter your mobile number or email to</p>
+      <h2 class="text-2xl font-heading font-semibold">Login</h2>
+
+      <input
+        type="text"
+        placeholder="Enter Mobile No / Email"
+        formControlName="emailOrNumber"
+        class="w-full p-3 border border-[#c3b27a] bg-[#fffdf7] rounded focus:outline-none focus:ring-2 focus:ring-[#c3b27a]"
+      />
+
+      <input
+        type="password"
+        placeholder="Password"
+        formControlName="password"
+        class="w-full p-3 border border-[#c3b27a] bg-[#fffdf7] rounded focus:outline-none focus:ring-2 focus:ring-[#c3b27a]"
+      />
+
+      <button
+        type="submit"
+        (click)="login()"
+        class="w-full bg-[#5e4b2b] text-white py-2 rounded hover:bg-[#997950] transition"
+      >
+        Login
+      </button>
+      <p class="text-sm text-center mt-2">
+        Don't have an account?
+        <a
+          href="/register"
+          class="text-[#5e4b2b] font-semibold underline hover:text-[#997950]"
+          >Register here</a
+        >
+      </p>
+       <p class="text-sm text-center mt-2">
+        
+        <a
+          href="/reset"
+          class="text-[#5e4b2b] font-semibold underline hover:text-[#997950]"
+          >Forget Password?</a
+        >
+      </p>
+    </form>
+  </div>
+
+</section>

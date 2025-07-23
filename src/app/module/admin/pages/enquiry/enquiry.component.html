@@ -1,0 +1,167 @@
+<section class="flex flex-col w-full h-full p-4">
+  <div class="flex flex-col lg:overflow-x-hidden overflow-y-hidden">
+    <div class="-m-1.5">
+      <div class="p-1.5 min-w-full inline-block align-middle">
+        <div class="">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead>
+              <tr>
+                <th
+                  scope="col"
+                  class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase"
+                >
+                  Name
+                </th>
+                <th
+                  scope="col"
+                  class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase"
+                >
+                  Email
+                </th>
+                <th
+                  scope="col"
+                  class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase"
+                >
+                  Phone Number (Whatsapp)
+                </th>
+                <th
+                  scope="col"
+                  class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase"
+                >
+                  Country
+                </th>
+                <th
+                  scope="col"
+                  class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase"
+                >
+                  Subject
+                </th>
+                <th
+                  scope="col"
+                  class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase"
+                >
+                  Created At
+                </th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+              <tr *ngFor="let enquiry of enquiries" class="hover:bg-gray-100">
+                <td
+                  class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800"
+                >
+                  {{ enquiry.flName }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
+                  {{ enquiry.email }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
+                  {{ enquiry.phone }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
+                  {{ enquiry.country }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
+                  {{ enquiry.subject }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
+                  {{ enquiry.createdAt | date : "dd/MM/yyyy" }}
+                </td>
+
+                <td
+                  class="px-6 py-4 whitespace-nowrap text-end text-sm font-medium"
+                >
+                  <button
+                    (click)="openDeletEnquiry(user)"
+                    class="text-red-600 hover:text-red-800 text-sm font-semibold px-3 py-2"
+                  >
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div
+  *ngIf="showModel"
+  class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 transition-all duration-300"
+  (click)="closeDetailsModal()"
+>
+  <div
+    class="relative bg-white rounded-2xl shadow-2xl p-8 w-full max-w-xl animate-fade-in"
+    (click)="$event.stopPropagation()"
+  >
+    <button
+      (click)="closeDetailsModal()"
+      class="absolute top-4 right-4 text-gray-400 hover:text-red-500 text-2xl font-bold focus:outline-none transition-colors duration-200"
+      aria-label="Close"
+    >
+      &times;
+    </button>
+    <div class="flex items-center gap-4 mb-6">
+      <div class="flex-shrink-0 bg-blue-100 rounded-full p-3">
+        <svg
+          class="w-8 h-8 text-blue-600"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M5.121 17.804A13.937 13.937 0 0112 15c2.5 0 4.847.655 6.879 1.804M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+          />
+        </svg>
+      </div>
+      <h3 class="text-2xl font-bold text-gray-800">User Details</h3>
+    </div>
+    <div class="space-y-3 text-gray-700">
+      <div class="flex items-center">
+        <span class="w-32 font-semibold">Name:</span>
+        <span>{{ user.flName }}</span>
+      </div>
+      <div class="flex items-center">
+        <span class="w-32 font-semibold">Email:</span>
+        <span>{{ user.email }}</span>
+      </div>
+      <div class="flex items-center">
+        <span class="w-32 font-semibold">Phone:</span>
+        <span>{{ user.phone }}</span>
+      </div>
+      <div class="flex items-center">
+        <span class="w-32 font-semibold">Phone:</span>
+        <span>{{ user.country }}</span>
+      </div>
+      <div class="flex items-center">
+        <span class="w-32 font-semibold">Created At</span>
+        <span>{{ user.createdAt | date : "dd/MM/yyyy" }}</span>
+      </div>
+      <div class="flex items-center">
+        <span class="w-32 font-semibold">Phone:</span>
+        <span>{{ user.subject }}</span>
+      </div>
+      <div class="flex items-center">
+        <span class="w-32 font-semibold">Phone:</span>
+        <span>{{ user.content }}</span>
+      </div>
+    </div>
+    <div class="mt-8 flex justify-end">
+      <button
+        (click)="closeDetailsModal()"
+        class="px-6 py-2 bg-gradient-to-r from-blue-600 to-blue-400 text-white rounded-lg shadow hover:from-blue-700 hover:to-blue-500 transition-all duration-200 font-semibold"
+      >
+        Close
+      </button>
+    </div>
+  </div>
+</div>
+<app-confirmation-model
+  *ngIf="showComfirmModel"
+  [email]="email"
+  (onClick)="closeDeletEnquiry()"
+></app-confirmation-model>

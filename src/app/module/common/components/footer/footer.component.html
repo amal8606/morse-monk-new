@@ -1,0 +1,147 @@
+<!-- Footer Section -->
+<section class="bg-[#3e3020] text-[#f4f1ea] px-6 py-10 w-full font-body">
+  <div
+    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full md:max-w-6xl mx-auto"
+  >
+    <!-- About Section -->
+    <div>
+      <h3 class="text-xl font-heading font-semibold mb-3 text-[#dac7a0]">
+        About Morse Monk
+      </h3>
+      <p class="text-justify leading-relaxed text-[#f4f1ea]">
+        Led by Tojan Joseph, an ex-Marine Radio Officer, Morse Monk teaches
+        Morse code interactively and connects enthusiasts worldwide. We help
+        members learn, communicate, and prepare for MMD signal and ham exams.
+      </p>
+    </div>
+
+    <!-- Pages Navigation -->
+    <div>
+      <h3 class="text-xl font-heading font-semibold mb-3 text-[#dac7a0]">
+        Pages
+      </h3>
+      <ul class="space-y-2">
+        <li>
+          <button
+            (click)="scrollToSection('')"
+            class="hover:text-[#dac7a0] transition"
+          >
+            Home
+          </button>
+        </li>
+        <li>
+          <button
+            (click)="scrollToSection('about')"
+            class="hover:text-[#dac7a0] transition"
+          >
+            About
+          </button>
+        </li>
+        <li>
+          <button
+            (click)="scrollToSection('contact')"
+            class="hover:text-[#dac7a0] transition"
+          >
+            Contact
+          </button>
+        </li>
+        <li>
+          <button
+            (click)="navigateTo('/announcement')"
+            class="hover:text-[#dac7a0] transition"
+          >
+            Announcements
+          </button>
+        </li>
+        <li>
+          <button
+            (click)="navigateTo('/demo-booking')"
+            class="hover:text-[#dac7a0] transition"
+          >
+            Book Demo Class
+          </button>
+        </li>
+        <li>
+          <button
+            (click)="navigateTo('/enroll-class')"
+            class="hover:text-[#dac7a0] transition"
+          >
+            Enroll for Class
+          </button>
+        </li>
+        <li>
+          <button
+            (click)="navigateTo('/morse-integrator')"
+            class="hover:text-[#dac7a0] transition"
+          >
+            Morse Integrator
+          </button>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Contact Section -->
+    <div>
+      <h3 class="text-xl font-heading font-semibold mb-3 text-[#dac7a0]">
+        Contact
+      </h3>
+      <ul class="space-y-3 text-[#f4f1ea]">
+        <!-- Email -->
+        <li class="flex items-center gap-2">
+          <svg
+            class="w-5 h-5 text-[#dac7a0]"
+            fill="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 2l-8 5-8-5h16zm0 12H4V8l8 5 8-5v10z"
+            />
+          </svg>
+          <a href="mailto:hellomorsemonk@gmail.com" class="hover:text-[#dac7a0]"
+            >hellomorsemonk&#64;gmail.com</a
+          >
+        </li>
+
+        <!-- Phone -->
+        <li class="flex items-center gap-2">
+          <svg
+            class="w-5 h-5 text-[#dac7a0]"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M3 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H5a2 2 0 01-2-2V5zM3 15a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H5a2 2 0 01-2-2v-2zm10-10a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zm0 10a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
+            />
+          </svg>
+          <a href="tel:+919497445288" class="hover:text-[#dac7a0]"
+            >+91 94974 45288</a
+          >
+        </li>
+
+        <!-- WhatsApp -->
+        <li class="flex items-center gap-2">
+          <svg
+            class="w-5 h-5 text-green-500"
+            viewBox="0 0 32 32"
+            fill="currentColor"
+          >
+            <path
+              d="M16 3C9.373 3 4 8.373 4 15c0 2.637.86 5.08 2.34 7.09l-1.53 5.6a1 1 0 001.23 1.23l5.6-1.53A11.96 11.96 0 0016 27c6.627 0 12-5.373 12-12S22.627 3 16 3zm0 22c-1.98 0-3.85-.52-5.45-1.43l-.39-.22-3.32.91.91-3.32-.22-.39A9.96 9.96 0 016 15c0-5.514 4.486-10 10-10s10 4.486 10 10-4.486 10-10 10zm5.29-7.71l-2.54-.73a1 1 0 00-.96.26l-1.12 1.12a8.06 8.06 0 01-3.54-3.54l1.12-1.12a1 1 0 00.26-.96l-.73-2.54A1 1 0 0013 8h-2a1 1 0 00-1 1c0 6.075 4.925 11 11 11a1 1 0 001-1v-2a1 1 0 00-.71-.96z"
+            />
+          </svg>
+          <a
+            href="https://wa.me/919497445288"
+            target="_blank"
+            rel="noopener"
+            class="hover:text-[#dac7a0]"
+            >+91 94974 45288</a
+          >
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>

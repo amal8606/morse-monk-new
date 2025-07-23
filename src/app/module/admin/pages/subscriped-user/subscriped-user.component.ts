@@ -1,0 +1,137 @@
+import { Component } from '@angular/core';
+import { BookingService } from '../../../../_core/http/api/booking.service';
+import { CommonModule } from '@angular/common';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { MatTableModule } from '@angular/material/table';
+import { SubscriptionService } from '../../../../_core/http/api/subscription.service';
+import { FormsModule } from '@angular/forms';
+import { EditSubscripedUserComponent } from './component/edit-subscriped-user/edit-subscriped-user.component';
+
+@Component({
+  selector: 'app-subscriped-user',
+  standalone: true,
+  imports: [
+    CommonModule,
+    MatTableModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatButtonModule,
+    FormsModule,
+    EditSubscripedUserComponent,
+  ],
+  templateUrl: './subscriped-user.component.html',
+})
+export class SubscripedUserComponent {
+  public users: any;
+  // public user: any = '';
+  // public selectedUser: any = '';
+
+  // public showModel: boolean = false;
+  selectedType = 'pending';
+
+  constructor(private readonly subscriptionService: SubscriptionService) {}
+
+  public status: any = 'pending';
+  public isActive: any = 0;
+  ngOnInit() {
+    this.getSubscription();
+  }
+  public onPaymentTypeChange() {
+    this.getSubscription();
+  }
+  onToggleChange(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (input.checked == true) {
+      this.isActive = 1;
+    } else {
+      this.isActive = 0;
+    }
+    this.getSubscription();
+  }
+  public getSubscription() {
+    this.status = this.selectedType;
+
+    this.subscriptionService
+      .getSubscription(this.status, this.isActive)
+      .subscribe({
+        next: (respo) => {
+          this.users = respo;
+        },
+        error: () => {},
+        complete: () => {},
+      });
+  }
+
+  loadingActive = new Set<number>();
+  loadingStatus = new Set<number>();
+
+  // isActiveSubscription(user: any) {
+  //   this.loadingActive.add(user.id);
+  //   const data = {
+  //     ...user,
+  //     active: user.active == 1 ? 0 : 1,
+  //   };
+
+  //   this.subscriptionService.updateSubscription(data).subscribe({
+  //     next: () => {
+  //       this.users = this.users.filter((a: any) => a.centerId !== user.id);
+  //       this.loadingActive.delete(user.id);
+  //       this.getSubscription();
+  //     },
+  //     error: () => {},
+  //   });
+  // }
+  // statusSubscription(user: any) {
+  //   this.loadingStatus.add(user.id);
+
+  //   const data = {
+  //     ...user,
+  //     status: user.status == 'pending' ? 'confirmed' : 'pending',
+  //   };
+
+  //   this.subscriptionService.updateSubscription(data).subscribe({
+  //     next: () => {
+  //       this.users = this.users.filter((a: any) => a.centerId !== user.id);
+  //       this.loadingStatus.delete(user.id);
+  //       this.getSubscription();
+  //     },
+  //     error: () => {},
+  //   });
+  // }
+
+  isActiceLoading(id: number): boolean {
+    return this.loadingActive.has(id);
+  }
+  isStatusLoading(id: any): boolean {
+    return this.loadingStatus.has(id);
+  }
+
+  public showEditSubscripedUser: boolean = false;
+  public user: any;
+  public action: any;
+  public openEditSubscripedUser(user: any, action: any) {
+    this.user = user;
+    this.showEditSubscripedUser = true;
+    switch (action) {
+      case 1:
+        return (this.action = 'Deactive');
+      case 0:
+        return (this.action = 'Active');
+
+      case 'pending':
+        return (this.action = 'Confirmed');
+      case 'confirmed':
+        return (this.action = 'Pending');
+
+      default:
+        return 0;
+    }
+  }
+
+  public closeEditSubscripedUser() {
+    this.showEditSubscripedUser = false;
+    this.getSubscription();
+  }
+}

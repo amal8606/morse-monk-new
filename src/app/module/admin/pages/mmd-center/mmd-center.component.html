@@ -1,0 +1,110 @@
+<section class="flex flex-col w-full h-full p-4">
+  <div>
+    <button
+      type="button"
+      class="mb-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 focus:outline-none"
+      (click)="openAddCenterModal()"
+    >
+      Add Center
+    </button>
+  </div>
+  <div class="flex flex-col lg:overflow-x-hidden overflow-y-hidden">
+    <div class="-m-1.5">
+      <div class="p-1.5 min-w-full inline-block align-middle">
+        <div class="">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead>
+              <tr>
+                <th
+                  class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase"
+                >
+                  Name
+                </th>
+                <th
+                  class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase"
+                >
+                  Created Date
+                </th>
+
+                <th
+                  class="px-6 py-3 text-end text-xs font-medium text-gray-500 uppercase"
+                >
+                  Action
+                </th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+              <tr *ngFor="let center of mmdCenters" class="hover:bg-gray-100">
+                <td
+                  class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800"
+                >
+                  {{ center.centerName }}
+                </td>
+
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
+                  {{ center.createdAt | date }}
+                </td>
+
+                <td
+                  class="px-6 py-4 whitespace-nowrap text-end text-sm font-medium"
+                >
+                  <button
+                    (click)="openEditCenterModal(center)"
+                    class="text-blue-600 hover:text-blue-800 text-sm font-semibold px-3 py-2"
+                  >
+                    Edit
+                  </button>
+
+                  <button
+                    *ngIf="!isDeleting(center.centerId)"
+                    (click)="deleteAnnouncement(center.centerId)"
+                    class="text-red-600 hover:text-red-800 text-sm font-semibold px-3 py-2"
+                  >
+                    Delete
+                  </button>
+
+                  <!-- Spinner when deleting -->
+                  <button
+                    *ngIf="isDeleting(center.centerId)"
+                    class="text-red-600 text-sm font-semibold px-3 py-2"
+                    disabled
+                  >
+                    <svg
+                      class="animate-spin h-5 w-5 inline"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        class="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        stroke-width="4"
+                      ></circle>
+                      <path
+                        class="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 100 16v-4l-3 3 3 3v-4a8 8 0 01-8-8z"
+                      />
+                    </svg>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<app-add-mmd-center
+  *ngIf="isAddCenterModalOpen"
+  (onClick)="closeAddCenterModal()"
+>
+</app-add-mmd-center>
+
+<app-edit-mmd-center
+  *ngIf="isEditCenterModalOpen"
+  [center]="center"
+  (onClick)="closeEditCenterModal()"
+></app-edit-mmd-center>

@@ -1,0 +1,52 @@
+<section
+  class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+>
+  <div
+    class="min-h-screen flex items-center justify-center px-4 py-12 fade-up-init"
+  >
+    <div
+      class="bg-white shadow-xl rounded-2xl p-8 max-w-md text-center border border-yellow-900"
+    >
+      <img
+        src="/success.gif"
+        alt="Pending animation"
+        class="mx-auto w-24 h-24"
+      />
+      <div *ngIf="isFileUploaded">
+        <h2 class="text-2xl font-heading text-[#3e3020] mb-2">
+          Thank you for your payment!
+        </h2>
+
+        <p class="text-lg text-gray-700 font-body">
+          Your payment was received and is currently marked as
+          <span class="font-semibold text-yellow-800">Pending</span>.
+        </p>
+
+        <p class="mt-4 text-gray-700 font-body">
+          Our team will review and confirm your payment shortly. You’ll be
+          contacted with further instructions once verified.You will be able use
+          the feature after you get a confirmation mail from us.
+        </p>
+      </div>
+      <ng-container *ngIf="paymentMethod == 'class'; else integrator">
+        <p class="mt-6 text-gray-700 font-body">
+          You have successfully registered for class. You will get a
+          confirmation email with class schedule with dates selection option
+        </p>
+      </ng-container>
+      <ng-template #integrator>
+        <p class="mt-6 text-gray-700 font-body">
+          You have successfully subscribed for morse integrator. You will be
+          able use the feature after you get a confirmation mail from us
+        </p>
+      </ng-template>
+
+      <a
+        routerLink="/"
+        class="mt-6 inline-block bg-[#5e4b2b] text-white font-heading px-6 py-2 rounded-lg shadow hover:bg-[#997950] transition"
+      >
+        Go to Home
+      </a>
+    </div>
+  </div>
+</section>

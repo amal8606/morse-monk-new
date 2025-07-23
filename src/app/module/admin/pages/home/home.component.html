@@ -1,0 +1,171 @@
+<section class="m-2">
+  <div class="flex gap-5">
+    <div class="mb-4">
+      <mat-form-field>
+        <mat-label>Select Payment Type</mat-label>
+        <mat-select [(value)]="selectedType">
+          <mat-option value="allPaymentsPending"
+            >All Payment ({{ allPendingPaymentsCount }})</mat-option
+          >
+          <mat-option value="enrol"
+            >Enrol Class Payment ({{ enrolPendingPaymentsCount }})</mat-option
+          >
+          <mat-option value="mmd"
+            >MMD Payment({{ mmdPendingPaymentsCount }})</mat-option
+          >
+          <mat-option value="demo">Demo Booking({{ demoCount }})</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div class="mb-4">
+      <mat-form-field>
+        <mat-label>Select Payment Status</mat-label>
+        <mat-select
+          [(value)]="selectedTypeStatus"
+          (selectionChange)="onStatusChange()"
+        >
+          <mat-option value="">All </mat-option>
+          <mat-option value="pending">Pending </mat-option>
+          <mat-option value="confirmed">Confirmed</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </div>
+
+  <!-- Mat Table -->
+  <div class="lg:overflow-x-hidden overflow-y-hidden">
+    <table
+      mat-table
+      [dataSource]="getCurrentData()"
+      class="mat-elevation-z8"
+      multiTemplateDataRows
+    >
+      <!-- Dynamic Column Definitions -->
+      <ng-container
+        [matColumnDef]="column"
+        *ngFor="let column of getDisplayedColumns()"
+      >
+        <th mat-header-cell *matHeaderCellDef>{{ getColumnHeader(column) }}</th>
+        <td mat-cell *matCellDef="let user">
+          <!-- Custom rendering -->
+          <ng-container [ngSwitch]="column">
+            <ng-container *ngSwitchCase="'bookingDate'">
+              {{ user.bookingDate | date : "dd/MM/yyyy" }}
+            </ng-container>
+            <ng-container *ngSwitchCase="'examDate'">
+              {{ user.examDate | date : "dd/MM/yyyy" }}
+            </ng-container>
+            <ng-container *ngSwitchCase="'amount'">
+              {{ user.amount | currency : "USD" }}
+            </ng-container>
+            <ng-container *ngSwitchCase="'paidDate'">
+              {{ user.paidDate | date : "dd/MM/yyyy" }}
+            </ng-container>
+
+            <ng-container *ngSwitchCase="'status'">
+              <div (click)="$event.stopPropagation()">
+                <button
+                  (click)="openConfirmModal(user, user.status)"
+                  class="text-white rounded-md px-3 py-2"
+                >
+                  <span
+                    class="px-2 py-1 rounded-full text-sm font-semibold"
+                    [ngClass]="
+                      user.status == 'confirmed'
+                        ? 'text-green-700 bg-green-100'
+                        : 'text-red-700 bg-red-100'
+                    "
+                  >
+                    {{ user.status == "confirmed" ? "Confirmed" : "Pending" }}
+                  </span>
+                </button>
+              </div>
+            </ng-container>
+            <ng-container *ngSwitchDefault>
+              {{ user[column] }}
+            </ng-container>
+          </ng-container>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="getDisplayedColumns()"></tr>
+      <tr
+        mat-row
+        *matRowDef="let row; columns: getDisplayedColumns()"
+        class="cursor-pointer hover:bg-gray-100"
+      ></tr>
+    </table>
+  </div>
+  <!-- <div
+    *ngIf="showModel"
+    class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 transition-all duration-300"
+    (click)="closeDetailsModal()"
+  >
+    <div
+      class="relative bg-white rounded-2xl shadow-2xl p-8 w-full max-w-xl animate-fade-in"
+      (click)="$event.stopPropagation()"
+    >
+      <button
+        (click)="closeDetailsModal()"
+        class="absolute top-4 right-4 text-gray-400 hover:text-red-500 text-2xl font-bold focus:outline-none transition-colors duration-200"
+        aria-label="Close"
+      >
+        &times;
+      </button>
+      <div class="flex items-center gap-4 mb-6">
+        <div class="flex-shrink-0 bg-blue-100 rounded-full p-3">
+          <svg
+            class="w-8 h-8 text-blue-600"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M5.121 17.804A13.937 13.937 0 0112 15c2.5 0 4.847.655 6.879 1.804M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+            />
+          </svg>
+        </div>
+        <h3 class="text-2xl font-bold text-gray-800">User Details</h3>
+      </div>
+      <div class="space-y-3 text-gray-700">
+        <div class="flex items-center">
+          <span class="w-32 font-semibold">Name:</span>
+          <span>{{ selectedUser.name }}</span>
+        </div>
+        <div class="flex items-center">
+          <span class="w-32 font-semibold">Email:</span>
+          <span>{{ selectedUser.email }}</span>
+        </div>
+        <div class="flex items-center">
+          <span class="w-32 font-semibold">Phone:</span>
+          <span>{{ selectedUser.phone }}</span>
+        </div>
+        <div class="flex items-center">
+          <span class="w-32 font-semibold">Booking Date:</span>
+          <span>{{ selectedUser.bookingDate | date : "dd/MM/yyyy" }}</span>
+        </div>
+        <div *ngIf="selectedUser.feePaidDate" class="flex items-center">
+          <span class="w-32 font-semibold">Fee Paid Date:</span>
+          <span>{{ selectedUser.feePaidDate | date : "dd/MM/yyyy" }}</span>
+        </div>
+      </div>
+      <div class="mt-8 flex justify-end">
+        <button
+          (click)="closeDetailsModal()"
+          class="px-6 py-2 bg-gradient-to-r from-blue-600 to-blue-400 text-white rounded-lg shadow hover:from-blue-700 hover:to-blue-500 transition-all duration-200 font-semibold"
+        >
+          Close
+        </button>
+      </div>
+    </div>
+  </div> -->
+</section>
+<app-edit-home
+  *ngIf="showConfirm"
+  [user]="user"
+  [action]="action"
+  (onClick)="closeConfirmModal()"
+></app-edit-home>

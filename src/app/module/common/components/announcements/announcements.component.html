@@ -1,0 +1,33 @@
+<section class="min-h-screen bg-[#f4f1ea] py-16 px-4 font-body text-[#3e3020]">
+  <div class="max-w-6xl mx-auto">
+    <h1 class="text-3xl md:text-4xl font-heading text-center mb-10">
+      Latest Announcements
+    </h1>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <!-- Loop through announcements -->
+      <div
+        *ngFor="let announcement of announcements"
+        class="bg-[#fdfaf3] rounded-xl shadow-md border border-[#c3b27a] p-6 space-y-4"
+        data-aos="fade-up"
+      >
+        <h2 class="text-2xl font-heading">{{ announcement.title }}</h2>
+        <p class="text-sm text-[#5e4b2b]">
+          Posted on:
+          <span class="font-medium">{{ announcement.createdAt | date }}</span>
+        </p>
+        <p class="text-base leading-relaxed">
+          {{ announcement.message }}
+        </p>
+      </div>
+    </div>
+
+    <!-- Optional: No Announcements -->
+    <div
+      *ngIf="announcements?.length === 0"
+      class="text-center mt-20 text-xl font-body text-[#5e4b2b]"
+    >
+      No announcements at the moment. Please check back later.
+    </div>
+  </div>
+</section>

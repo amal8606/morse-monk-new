@@ -1,0 +1,149 @@
+<section
+  id="contact"
+  itemscope
+  itemtype="https://schema.org/ContactPage"
+  class="w-full bg-parchment text-ink py-16 px-4"
+>
+  <div class="max-w-4xl mx-auto" data-aos="fade-up">
+    <!-- Main Heading (Mobile-Friendly) -->
+    <div class="text-center mb-8 sm:mb-12 px-2">
+      <h1
+        class="text-3xl sm:text-4xl md:text-5xl font-heading tracking-wide text-ink border-y-4 border-[#dac7a0] px-6 sm:px-8 py-3 sm:py-4 bg-[#f9f6ee] rounded-md shadow-sm inline-flex mx-auto"
+      >
+        Contact Us
+      </h1>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-10">
+      <!-- Contact Info -->
+      <div
+        class="bg-white rounded-xl p-8 shadow-md border border-[#dac7a0] space-y-6"
+      >
+        <h2 class="text-2xl font-heading mb-4">Reach Us</h2>
+        <p class="text-lg font-heading">
+          <span class="font-semibold">Email:</span>
+          <a
+            href="mailto:hellomorsemonk@gmail.com"
+            class="text-ink underline break-all"
+            itemprop="email"
+            >hellomorsemonk&#64;gmail.com</a
+          >
+        </p>
+        <p class="text-lg font-heading">
+          <span class="font-semibold">Phone:</span>
+          <a
+            href="tel:0919497445288"
+            class="text-ink underline"
+            itemprop="telephone"
+            >091-949-744-5288</a
+          >
+        </p>
+      </div>
+
+      <!-- Contact Form -->
+      <form
+        class="bg-white rounded-xl p-8 shadow-md border border-[#dac7a0] space-y-6"
+        action="https://formsubmit.co/your-email@example.com"
+        method="POST"
+        aria-label="Contact form"
+        [formGroup]="emailForm"
+      >
+        <h2 class="text-2xl font-heading mb-4">Send a Message</h2>
+
+        <!-- Hidden fields for FormSubmit -->
+        <input
+          type="hidden"
+          name="_subject"
+          value="New message from Morse Monk Website"
+        />
+        <input type="hidden" name="_captcha" value="false" />
+        <input type="hidden" name="_template" value="box" />
+
+        <!-- Name -->
+        <div>
+          <label for="name" class="block font-semibold mb-1">Name</label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            required
+            placeholder="Your Full Name"
+            formControlName="flName"
+            class="w-full border border-[#dac7a0] rounded-lg px-4 py-2 bg-[#fdfaf3] text-ink focus:outline-none focus:ring-2 focus:ring-[#3e3020] font-sans"
+            aria-required="true"
+          />
+        </div>
+
+        <!-- Phine -->
+        <div>
+          <label for="phone" class="block font-semibold mb-1">Phone</label>
+          <input
+            type="text"
+            id="phone"
+            name="phone"
+            required
+            placeholder="Your Phone Number"
+            formControlName="phone"
+            class="w-full border border-[#dac7a0] rounded-lg px-4 py-2 bg-[#fdfaf3] text-ink focus:outline-none focus:ring-2 focus:ring-[#3e3020] font-sans"
+            aria-required="true"
+          />
+        </div>
+
+        <!-- Email -->
+        <div>
+          <label for="email" class="block font-semibold mb-1">Email</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            required
+            formControlName="email"
+            placeholder="you@example.com"
+            class="w-full border border-[#dac7a0] rounded-lg px-4 py-2 bg-[#fdfaf3] text-ink focus:outline-none focus:ring-2 focus:ring-[#3e3020] font-sans"
+            aria-required="true"
+          />
+        </div>
+
+        <!-- Subject -->
+        <div>
+          <label for="subject" class="block font-semibold mb-1">Subject</label>
+          <input
+            type="text"
+            id="subject"
+            name="subject"
+            placeholder="Message Subject"
+            formControlName="subject"
+            class="w-full border border-[#dac7a0] rounded-lg px-4 py-2 bg-[#fdfaf3] text-ink focus:outline-none focus:ring-2 focus:ring-[#3e3020] font-sans"
+          />
+        </div>
+
+        <!-- Message -->
+        <div>
+          <label for="message" class="block font-semibold mb-1">Message</label>
+          <textarea
+            id="message"
+            name="message"
+            rows="5"
+            required
+            formControlName="content"
+            placeholder="Your message here..."
+            class="w-full border border-[#dac7a0] rounded-lg px-4 py-2 bg-[#fdfaf3] text-ink focus:outline-none focus:ring-2 focus:ring-[#3e3020] font-sans"
+            aria-required="true"
+          ></textarea>
+        </div>
+
+        <!-- Submit -->
+        <div class="text-center">
+          <button
+          [disabled]="emailForm.invalid && !isValid"
+            type="submit"
+            (click)="sendEmail()"
+            class="bg-ink disabled:cursor-not-allowed text-white font-heading px-6 py-3 rounded-full shadow hover:bg-[#3e3020] transition-all"
+          >
+            📬 Send Message
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>

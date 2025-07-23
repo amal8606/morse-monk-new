@@ -1,0 +1,147 @@
+<!-- Navigation Bar -->
+<section
+  class="fixed top-0 left-0 w-full bg-white z-50 shadow-md py-2 md:py-3 lg:py-4"
+>
+  <div class="w-[90%] mx-auto flex items-center justify-between">
+    <!-- Logo -->
+    <!-- Logo -->
+    <!-- Logo -->
+    <!-- Logo -->
+    <div
+      (click)="navigateTo('/')"
+      class="flex items-center h-16 md:h-20 lg:h-24 overflow-hidden"
+    >
+      <img
+        src="/logo_new.jpg"
+        alt="logo"
+        class="h-full w-auto max-w-[100px] md:max-w-[120px] lg:max-w-[160px] object-contain"
+      />
+    </div>
+
+    <!-- Desktop Nav Links -->
+    <div class="hidden md:flex gap-6 items-center text-lg font-medium text-ink">
+      <button
+        class="hover:text-purple-800 font-heading transition"
+        (click)="scrollToSection('home')"
+      >
+        Home
+      </button>
+      <button
+        class="hover:text-purple-800 font-heading transition"
+        (click)="scrollToSection('about')"
+      >
+        About
+      </button>
+      <button
+        class="hover:text-purple-800 font-heading transition"
+        (click)="scrollToSection('contact')"
+      >
+        Contact
+      </button>
+      <button
+        class="hover:text-purple-800 font-heading transition"
+        (click)="navigateTo('/announcement')"
+      >
+        Announcements
+      </button>
+      <button
+        *ngIf="userInfo?.isActive"
+        class="hover:text-purple-800 font-heading transition"
+        (click)="navigateTo('/message')"
+      >
+        Integrator
+      </button>
+      <button
+        *ngIf="!userInfo.userId"
+        type="button"
+        class="py-2 px-6 text-base font-heading rounded-lg border border-yellow-800 bg-[#5e4b2b] text-white hover:bg-[#997950] transition-all"
+        (click)="navigateTo('login')"
+      >
+        Login
+      </button>
+      <button
+        *ngIf="userInfo.userId"
+        type="button"
+        class="py-2 px-6 text-base font-heading rounded-lg border border-yellow-800 bg-[#5e4b2b] text-white hover:bg-[#997950] transition-all"
+        (click)="logOut()"
+      >
+        Logout
+      </button>
+    </div>
+
+    <!-- Mobile Menu Button -->
+    <button class="md:hidden focus:outline-none" (click)="toggleMobileMenu()">
+      <svg
+        class="w-6 h-6 text-ink"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M4 6h16M4 12h16M4 18h16"
+        />
+      </svg>
+    </button>
+  </div>
+
+  <!-- Mobile Nav Menu -->
+  <div *ngIf="isMobileMenuOpen" class="md:hidden mt-4 px-4">
+    <div class="flex flex-col gap-4 text-lg font-medium text-ink">
+      <button
+        (click)="scrollToSection('home'); toggleMobileMenu()"
+        class="hover:text-purple-800 font-heading"
+      >
+        Home
+      </button>
+      <button
+        (click)="scrollToSection('about'); toggleMobileMenu()"
+        class="hover:text-purple-800 font-heading"
+      >
+        About
+      </button>
+      <button
+        (click)="scrollToSection('contact'); toggleMobileMenu()"
+        class="hover:text-purple-800 font-heading"
+      >
+        Contact
+      </button>
+      <button
+        class="hover:text-purple-800 font-heading"
+        (click)="navigateTo('/announcement'); toggleMobileMenu()"
+      >
+        Announcements
+      </button>
+      <button
+        *ngIf="userInfo?.isActive"
+        class="hover:text-purple-800 font-heading transition"
+        (click)="navigateTo('/message'); toggleMobileMenu()"
+      >
+        Integrator
+      </button>
+      <!-- login/logout button -->
+      <button
+        *ngIf="!userInfo.userId"
+        type="button"
+        class="py-2 px-4 text-base font-heading rounded-lg border border-yellow-800 bg-[#5e4b2b] text-white hover:bg-[#997950] transition-all"
+        (click)="navigateTo('login'); toggleMobileMenu()"
+      >
+        Login
+      </button>
+
+      <button
+        *ngIf="userInfo.userId"
+        type="button"
+        class="py-2 px-4 text-base font-heading rounded-lg border border-yellow-800 bg-red-700 text-white hover:bg-red-600 transition-all"
+        (click)="logOut(); toggleMobileMenu()"
+      >
+        Logout
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- Spacer -->
+<div class="h-16 md:h-20 lg:h-28"></div>

@@ -1,0 +1,117 @@
+<section
+  id="home"
+  class="fade-up-init flex items-center justify-center bg-[#f4f1ea] w-full min-h-screen relative px-4"
+  style="
+    background-image: url('/sail-ship.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+  "
+>
+  <!-- Gradient Overlay -->
+  <div
+    class="absolute inset-0 z-10 pointer-events-none"
+    style="
+      background: linear-gradient(
+        to bottom,
+        rgba(217, 213, 213, 0.213),
+        rgba(255, 255, 255, 0.848)
+      );
+    "
+  ></div>
+
+  <!-- Content Wrapper -->
+  <div class="relative z-20 w-full max-w-6xl text-center">
+    <!-- Text & Image Row -->
+    <div class="flex flex-col md:flex-row items-center gap-8">
+      <div class="flex-1 text-center md:text-left">
+        <h1 class="text-2xl sm:text-3xl md:text-4xl font-heading mb-4 text-ink">
+          Morse Monk – Mastering Morse Code in the Digital Age
+        </h1>
+        <p class="text-base sm:text-lg text-ink font-body leading-relaxed">
+          In a world driven by rapid communication, Morse Monk stands as a
+          bridge between timeless tradition and modern technology. This
+          innovative platform aims to give life to the age-old legacy of morse
+          code communication. Useful for hobbyists, radio enthusiasts,
+          survivalists, history buffs and those eager to immerse in to the world
+          of morse mania.
+        </p>
+      </div>
+    </div>
+
+    <!-- Buttons -->
+    <div
+      class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 justify-center mt-8 px-2"
+    >
+      <!-- Button 1 -->
+      <button
+        type="button"
+        class="w-full py-2 px-6 flex justify-center items-center gap-2 text-base font-heading rounded-lg border border-yellow-800 bg-[#5e4b2b] text-white hover:bg-[#997950] focus:outline-none focus:ring-2 focus:ring-yellow-800 transition"
+        (click)="navigateTo('/demo-booking')"
+      >
+        Book Demo Class
+        <svg
+          class="w-5 h-5"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M9 5l7 7-7 7"
+          />
+        </svg>
+      </button>
+
+      <!-- Button 2 -->
+      <button
+        type="button"
+        class="w-full py-2 px-6 flex justify-center items-center gap-2 text-base font-heading rounded-lg border border-yellow-800 bg-[#5e4b2b] text-white hover:bg-[#997950] focus:outline-none focus:ring-2 focus:ring-yellow-800 transition"
+        (click)="navigateTo('checkLogin')"
+      >
+        Enroll For Class
+        <svg
+          class="w-5 h-5"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M9 5l7 7-7 7"
+          />
+        </svg>
+      </button>
+
+      <!-- Button 3 -->
+      <button
+        type="button"
+        class="w-full py-2 px-6 flex justify-center items-center gap-2 text-base font-heading rounded-lg border border-yellow-800 bg-[#5e4b2b] text-white hover:bg-[#997950] focus:outline-none focus:ring-2 focus:ring-yellow-800 transition"
+        (click)="navigateTo('/morse-integrator')"
+      >
+        Morse Integrator
+        <svg
+          class="w-5 h-5"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M9 5l7 7-7 7"
+          />
+        </svg>
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT & CONTACT COMPONENTS -->
+<app-about id="about"></app-about>
+<app-contact id="contact"></app-contact>

@@ -1,0 +1,58 @@
+<section class="flex flex-col w-full h-full p-4">
+  <div>
+    <button
+      class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+      (click)="openAddAnnouncement()"
+    >
+      Add New Announcement
+    </button>
+  </div>
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 my-4">
+    <div
+      class="bg-white rounded-lg shadow-lg p-4 flex flex-col"
+      *ngFor="let announcement of announcements"
+    >
+      <h3 class="text-lg font-semibold mb-2">{{ announcement.title }}</h3>
+      <p class="mb-4">{{ announcement.message }}</p>
+      <span
+        class="px-2 py-1 rounded-full text-sm font-semibold"
+        [ngClass]="
+          announcement.isActive === 1 ? ' text-green-700' : ' text-red-700'
+        "
+      >
+        {{ announcement.isActive === 1 ? "Active" : "Not Active" }}
+      </span>
+
+      <div class="mt-auto flex justify-between items-center">
+        <span class="text-sm text-gray-500">
+          {{ announcement.createdAt | date : "mediumDate" }}
+        </span>
+        <div class="flex">
+          <!-- <button
+            (click)="openEditAnnouncement(announcement)"
+            class="text-blue-600 hover:text-blue-800 text-sm font-semibold px-3 py-2"
+          >
+            Edit
+          </button> -->
+          <button
+            (click)="openDeleteAnnouncement(announcement)"
+            class="text-red-600 hover:text-red-800 text-sm font-semibold px-3 py-2"
+          >
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<app-add-announcement
+  *ngIf="showAddAnnouncement"
+  (onClick)="closeAddAnnouncement()"
+>
+</app-add-announcement>
+<app-edit-announcement
+  *ngIf="showEditAnnouncement"
+  [announcement]="announcement"
+  (onClick)="closeDeleteAnnouncement()"
+></app-edit-announcement>

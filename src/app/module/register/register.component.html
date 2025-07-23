@@ -1,0 +1,168 @@
+<section
+  class="fixed inset-0 z-50 flex flex-col md:flex-row h-screen overflow-auto font-body bg-[#f4f1ea] text-[#3e3020]"
+>
+  <!-- Left side: Logo and Welcome -->
+  <div
+    class="w-full md:w-1/2 flex flex-col justify-center items-center bg-[#e6dcc5] p-6"
+  >
+    <h1 class="text-4xl font-heading font-bold">Morse Monk</h1>
+    <p class="mt-2 text-lg italic">Join the Legacy</p>
+  </div>
+
+  <!-- Right side: Registration Form -->
+  <div
+    class="w-full md:w-1/2 flex flex-col justify-center items-center bg-white p-6"
+  >
+    <form
+      [formGroup]="registrationForm"
+      class="w-full max-w-md space-y-4 bg-[#fdfaf4] p-8 rounded-lg shadow-lg"
+    >
+      <h2 class="text-2xl font-heading font-semibold text-center mb-4">
+        Create Account
+      </h2>
+
+      <!-- Full Name -->
+      <input
+        type="text"
+        placeholder="Full Name"
+        formControlName="fullName"
+        class="w-full p-3 border border-[#c3b27a] bg-[#fffdf7] rounded focus:outline-none focus:ring-2 focus:ring-[#c3b27a]"
+        required
+      />
+
+      <!-- Email -->
+      <input
+        type="email"
+        placeholder="Email"
+        formControlName="email"
+        class="w-full p-3 border border-[#c3b27a] bg-[#fffdf7] rounded focus:outline-none focus:ring-2 focus:ring-[#c3b27a]"
+        required
+      />
+      <div>
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label>Select Country</mat-label>
+          <mat-select formControlName="country">
+            <mat-option
+              *ngFor="let country of country"
+              [value]="country.name"
+              >{{ country.name }}</mat-option
+            >
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <!-- Phone -->
+      <input
+        type="tel"
+        placeholder="Phone Number"
+        formControlName="phoneNumber"
+        class="w-full p-3 border border-[#c3b27a] bg-[#fffdf7] rounded focus:outline-none focus:ring-2 focus:ring-[#c3b27a]"
+        required
+      />
+
+      <div class="mb-4">
+        <label for="dateOfBirth" class="block mb-1">Date of Birth</label>
+        <input
+          id="dateOfBirth"
+          type="date"
+          formControlName="dateOfBirth"
+          class="w-full p-3 border border-[#c3b27a] bg-[#fffdf7] rounded focus:outline-none focus:ring-2 focus:ring-[#c3b27a] text-[#3e3020]"
+          required
+        />
+      </div>
+
+      <!-- Password -->
+      <div class="mt-3 relative">
+        <input
+          [type]="showPassword ? 'text' : 'password'"
+          placeholder="Password"
+          formControlName="passwordHash"
+          class="w-full p-3 border border-[#c3b27a] bg-[#fffdf7] rounded focus:outline-none focus:ring-2 focus:ring-[#c3b27a]"
+          required
+        />
+        <span class="top-3 right-3 absolute">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            (click)="togglePasswordVisibility('passwordHash')"
+            height="15"
+            width="15"
+            viewBox="0 0 576 512"
+          >
+            <!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+            <path
+              d="M288 80c-65.2 0-118.8 29.6-159.9 67.7C89.6 183.5 63 226 49.4 256c13.6 30 40.2 72.5 78.6 108.3C169.2 402.4 222.8 432 288 432s118.8-29.6 159.9-67.7C486.4 328.5 513 286 526.6 256c-13.6-30-40.2-72.5-78.6-108.3C406.8 109.6 353.2 80 288 80zM95.4 112.6C142.5 68.8 207.2 32 288 32s145.5 36.8 192.6 80.6c46.8 43.5 78.1 95.4 93 131.1c3.3 7.9 3.3 16.7 0 24.6c-14.9 35.7-46.2 87.7-93 131.1C433.5 443.2 368.8 480 288 480s-145.5-36.8-192.6-80.6C48.6 356 17.3 304 2.5 268.3c-3.3-7.9-3.3-16.7 0-24.6C17.3 208 48.6 156 95.4 112.6zM288 336c44.2 0 80-35.8 80-80s-35.8-80-80-80c-.7 0-1.3 0-2 0c1.3 5.1 2 10.5 2 16c0 35.3-28.7 64-64 64c-5.5 0-10.9-.7-16-2c0 .7 0 1.3 0 2c0 44.2 35.8 80 80 80zm0-208a128 128 0 1 1 0 256 128 128 0 1 1 0-256z"
+            />
+          </svg>
+        </span>
+      </div>
+      <!-- Confirm Password -->
+      <div class="mt-3 relative">
+        <input
+          [type]="showConfirmPassword ? 'text' : 'password'"
+          placeholder="Confirm Password"
+          formControlName="confirmPassword"
+          class="w-full p-3 border border-[#c3b27a] bg-[#fffdf7] rounded focus:outline-none focus:ring-2 focus:ring-[#c3b27a]"
+          required
+        />
+        <span class="top-3 right-3 absolute">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            (click)="togglePasswordVisibility('confirmPassword')"
+            height="15"
+            width="15"
+            viewBox="0 0 576 512"
+          >
+            <!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+            <path
+              d="M288 80c-65.2 0-118.8 29.6-159.9 67.7C89.6 183.5 63 226 49.4 256c13.6 30 40.2 72.5 78.6 108.3C169.2 402.4 222.8 432 288 432s118.8-29.6 159.9-67.7C486.4 328.5 513 286 526.6 256c-13.6-30-40.2-72.5-78.6-108.3C406.8 109.6 353.2 80 288 80zM95.4 112.6C142.5 68.8 207.2 32 288 32s145.5 36.8 192.6 80.6c46.8 43.5 78.1 95.4 93 131.1c3.3 7.9 3.3 16.7 0 24.6c-14.9 35.7-46.2 87.7-93 131.1C433.5 443.2 368.8 480 288 480s-145.5-36.8-192.6-80.6C48.6 356 17.3 304 2.5 268.3c-3.3-7.9-3.3-16.7 0-24.6C17.3 208 48.6 156 95.4 112.6zM288 336c44.2 0 80-35.8 80-80s-35.8-80-80-80c-.7 0-1.3 0-2 0c1.3 5.1 2 10.5 2 16c0 35.3-28.7 64-64 64c-5.5 0-10.9-.7-16-2c0 .7 0 1.3 0 2c0 44.2 35.8 80 80 80zm0-208a128 128 0 1 1 0 256 128 128 0 1 1 0-256z"
+            />
+          </svg>
+        </span>
+      </div>
+      <div *ngIf="wrongPassword" class="text-red-500 text-xs">
+        <p>*different password</p>
+      </div>
+
+      <!-- Submit Button -->
+      <button
+        *ngIf="!isLoading"
+        type="submit"
+        (click)="onSubmit()"
+        class="w-full bg-[#5e4b2b] text-white py-2 rounded hover:bg-[#997950] transition"
+      >
+        Register
+      </button>
+      <button
+        *ngIf="isLoading"
+        type="button"
+        class="w-full bg-[#5e4b2b] text-white py-2 rounded hover:bg-[#997950] transition"
+        disabled
+      >
+        <svg class="animate-spin h-5 w-5 mr-2 inline" viewBox="0 0 24 24">
+          <circle
+            class="opacity-25"
+            cx="12"
+            cy="12"
+            r="10"
+            stroke="currentColor"
+            stroke-width="4"
+          ></circle>
+          <path
+            class="opacity-75"
+            fill="currentColor"
+            d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 100 16v-4l-3 3 3 3v-4a8 8 0 01-8-8z"
+          />
+        </svg>
+        Loading...
+      </button>
+    </form>
+    <p class="text-sm text-center mt-10ss">
+      Already have an account?
+      <a
+        href="/login"
+        class="text-[#5e4b2b] font-semibold underline hover:text-[#997950]"
+        >Login here</a
+      >
+    </p>
+  </div>
+</section>

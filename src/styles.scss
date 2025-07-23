@@ -1,0 +1,38 @@
+/* You can add global styles to this file, and also import other style files */
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+// @import "../../node_modules/ngx-toastr/toastr.css";
+
+//@import "~intl-tel-input/build/css/intlTelInput.css";
+::ng-deep .mat-horizontal-stepper-header-container {
+  background-color: white;
+}
+
+::ng-deep .mat-step-header,
+::ng-deep .mat-step-label {
+  color: black;
+}
+
+::ng-deep .mat-step-content {
+  background-color: white;
+  color: black;
+}
+//loading animation
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-up-init {
+  animation: fadeUp 1s ease-out forwards;
+}
+html {
+  scroll-padding-top: 6rem; // adjust based on actual navbar height
+}

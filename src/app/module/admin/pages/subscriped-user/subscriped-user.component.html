@@ -1,0 +1,215 @@
+<section class="flex flex-col w-full h-full p-4">
+  <div class="mb-4 flex gap-2">
+    <mat-form-field>
+      <mat-label>Select Payment Type</mat-label>
+      <mat-select
+        [(value)]="selectedType"
+        (selectionChange)="onPaymentTypeChange()"
+      >
+        <mat-option value="pending">Pending </mat-option>
+        <mat-option value="confirmed">Confirmed</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <label class="inline-flex items-center cursor-pointer">
+      <span class="mr-2 text-gray-700">Active</span>
+      <div class="relative">
+        <input
+          type="checkbox"
+          [checked]="false"
+          class="sr-only peer"
+          (change)="onToggleChange($event)"
+        />
+        <div
+          class="w-11 h-6 bg-gray-300 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-500 rounded-full peer peer-checked:bg-blue-600 transition-all"
+        ></div>
+        <div
+          class="absolute left-0.5 top-0.5 bg-white w-5 h-5 rounded-full transition-all peer-checked:translate-x-full"
+        ></div>
+      </div>
+    </label>
+  </div>
+  <div class="flex flex-col overflow-y-hidden">
+    <div class="-m-1.5">
+      <div class="p-1.5 min-w-full inline-block align-middle">
+        <div class="">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead>
+              <tr>
+                <th
+                  scope="col"
+                  class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase"
+                >
+                  Name
+                </th>
+                <th
+                  scope="col"
+                  class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase"
+                >
+                  Email
+                </th>
+                <th
+                  scope="col"
+                  class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase"
+                >
+                  Phone Number (Whatsapp)
+                </th>
+                <th
+                  scope="col"
+                  class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase"
+                >
+                  Country
+                </th>
+                <th
+                  scope="col"
+                  class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase"
+                >
+                  Start Date
+                </th>
+                <th
+                  scope="col"
+                  class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase"
+                >
+                  End Date
+                </th>
+
+                <th
+                  scope="col"
+                  class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase"
+                >
+                  Created At
+                </th>
+                <th
+                  scope="col"
+                  class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase"
+                >
+                  Duration
+                </th>
+                <th
+                  scope="col"
+                  class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase"
+                >
+                  Amount
+                </th>
+                <th
+                  scope="col"
+                  class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase"
+                >
+                  Paid Date
+                </th>
+
+                <th
+                  scope="col"
+                  class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase"
+                >
+                  Payment Method
+                </th>
+
+                <th
+                  scope="col"
+                  class="px-6 py-3 text-end text-xs font-medium text-gray-500 uppercase"
+                >
+                  Active
+                </th>
+                <th
+                  scope="col"
+                  class="px-6 py-3 text-end text-xs font-medium text-gray-500 uppercase"
+                >
+                  Payment Status
+                </th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+              <tr *ngFor="let user of users" class="hover:bg-gray-100">
+                <td
+                  class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800"
+                >
+                  {{ user.userName }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
+                  {{ user.userEmail }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
+                  {{ user.phone }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
+                  {{ user.country }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
+                  {{ user.startDate | date : "dd/MM/yyyy" }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
+                  {{ user.endDate | date : "dd/MM/yyyy" }}
+                </td>
+
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
+                  {{ user.createdAt | date : "dd/MM/yyyy" }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
+                  {{ user.duration }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
+                  {{ user.amount | currency : "USD" }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
+                  {{ user.createdAt | date : "dd/MM/yyyy" }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
+                  {{ user.paymentMethod }}
+                </td>
+
+                <td
+                  class="px-6 py-4 whitespace-nowrap text-end text-sm font-medium"
+                >
+                  <button
+                    type="button"
+                    *ngIf="!isActiceLoading(user.id)"
+                    (click)="openEditSubscripedUser(user, user.active)"
+                    class="inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-red-600 hover:text-red-800 focus:outline-hidden focus:text-red-800 disabled:opacity-50 disabled:pointer-events-none-400-400"
+                  >
+                    <span
+                      class="px-2 py-1 rounded-full text-sm font-semibold"
+                      [ngClass]="
+                        user.active == 1
+                          ? 'text-green-700 bg-green-100'
+                          : 'text-red-700 bg-red-100'
+                      "
+                    >
+                      {{ user.active == 1 ? "Active" : "Not Active" }}
+                    </span>
+                  </button>
+                </td>
+                <td
+                  class="px-6 py-4 whitespace-nowrap text-end text-sm font-medium"
+                >
+                  <button
+                    type="button"
+                    (click)="openEditSubscripedUser(user, user.status)"
+                    class="inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-red-600 hover:text-red-800 focus:outline-hidden focus:text-red-800 disabled:opacity-50 disabled:pointer-events-none-400-400"
+                  >
+                    <span
+                      class="px-2 py-1 rounded-full text-sm font-semibold"
+                      [ngClass]="
+                        user.status == 'confirmed'
+                          ? 'text-green-700 bg-green-100'
+                          : 'text-red-700 bg-red-100'
+                      "
+                    >
+                      {{ user.status == "confirmed" ? "Confirmed" : "Pending" }}
+                    </span>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<app-edit-subscriped-user
+  *ngIf="showEditSubscripedUser"
+  [user]="user"
+  [action]="action"
+  (onClick)="closeEditSubscripedUser()"
+></app-edit-subscriped-user>

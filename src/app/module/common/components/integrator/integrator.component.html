@@ -1,0 +1,224 @@
+<section
+  class="w-full bg-parchment py-12 px-4 md:px-10 text-ink font-body fade-up-init"
+>
+  <div class="max-w-7xl mx-auto">
+    <!-- Header -->
+    <div class="text-center mb-12">
+      <h1 class="text-4xl md:text-5xl font-heading text-ink mb-4">
+        Subscribe to Morse Integrator
+      </h1>
+      <p class="text-lg text-[#4f4636] w-full mx-auto">
+        Unlock the ability to communicate using Morse code over the internet.
+        Join a vibrant global community with exclusive features and benefits.
+      </p>
+    </div>
+
+    <!-- Benefits Section -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+      <div
+        class="bg-white rounded-xl shadow-md p-6 border border-[#d4c79a] text-center"
+      >
+        <h3 class="text-xl font-semibold text-ink mb-2">Global Connectivity</h3>
+        <p>
+          Talk to fellow Morse enthusiasts from around the world with no special
+          hardware.
+        </p>
+      </div>
+      <div
+        class="bg-white rounded-xl shadow-md p-6 border border-[#d4c79a] text-center"
+      >
+        <h3 class="text-xl font-semibold text-ink mb-2">Flexible Plans</h3>
+        <p>
+          Choose from 3 months, 6 months, or 1 year subscriptions based on your
+          preference.
+        </p>
+      </div>
+      <div
+        class="bg-white rounded-xl shadow-md p-6 border border-[#d4c79a] text-center"
+      >
+        <h3 class="text-xl font-semibold text-ink mb-2">Digital Access</h3>
+        <p>
+          Use the Morse Integrator directly from your web browser — no
+          installation required.
+        </p>
+      </div>
+    </div>
+    <!-- Recorder -->
+    <div class="flex flex-col items-center my-5 p-4 rounded space-y-4">
+      <div class="flex flex-col items-center justify-center">
+       <button
+         [ngClass]="{
+    'ring-4 ring-yellow-300 scale-105': flashActive
+  }"
+          [disabled]="audioUrl !== ''"
+          (mousedown)="startTone()"
+          (mouseup)="stopTone()"
+          (touchstart)="startTone()"
+          (touchend)="stopTone()"
+          class="relative w-36 h-36 rounded-full shadow-xl active:scale-95 transition-all duration-150 ease-in-out border-4 border-[#cbb88c] overflow-hidden bg-white bg-opacity-80 backdrop-blur-md flex items-center justify-center font-heading text-lg text-white disabled:opacity-50 disabled:pointer-events-none hover:ring-4 hover:ring-[#e2d6b5]"
+          style="
+            background-image: url('/logo (5.1).png');
+            background-size: contain;
+            background-position: center;
+            background-repeat: no-repeat;
+          "
+        >
+          <span
+            class="absolute inset-0 bg-black bg-opacity-10 rounded-full pointer-events-none"
+          ></span>
+         
+        </button>
+
+        <div
+          *ngIf="!isRecording && !audioUrl"
+          class="text-center mt-4 text-lg font-body fade-up-init"
+        >
+          <p class="mb-2">Create your Demo Morse message</p>
+          <p class="text-sm text-gray-600">
+            Click the button to start recording
+          </p>
+        </div>
+        <ul
+          *ngIf="isRecording || audioUrl"
+          class="list-disc font-body pl-5 mt-2 space-y-1 fade-up-init"
+        >
+          <li>
+            Press and hold the <strong>🔊 Buzz</strong> button (or Ctrl key) to
+            create Morse tones.
+          </li>
+          <li>Click ⏹️ Stop to finish recording.</li>
+        </ul>
+
+        <button
+          *ngIf="isRecording"
+          (click)="stopRecording()"
+          [disabled]="!isRecording"
+          class="text-red-600 px-4 py-2 rounded hover:bg-red-100 disabled:opacity-50 w-full sm:w-auto"
+        >
+          ⏹️ Stop
+        </button>
+      </div>
+
+   <audio
+  #audioRef
+  *ngIf="audioUrl"
+  [src]="audioUrl"
+  controls
+  controlsList="nodownload"
+  class="w-full mt-2"
+  (play)="onAudioPlay()"
+  (pause)="onAudioPause()"
+  (ended)="onAudioPause()"
+></audio>
+    </div>
+
+    <!-- Plan Selection -->
+    <div class="text-center mb-10">
+      <h2 class="text-2xl font-heading text-ink mb-4">Choose Your Plan</h2>
+    </div>
+
+    <!-- Plan Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+      <div
+        [ngClass]="{
+          'border-4 border-[#3e3020]': selectedPlan == 3
+        }"
+        (click)="
+          choosePlan(userInfo?.country === 'India' ? 399 : 7, 3);
+          selectedPlan = 3
+        "
+        class="bg-[#fdfaf3] rounded-xl shadow-lg p-6 text-center hover:border-[#3e3020] transition cursor-pointer"
+        tabindex="0"
+        role="button"
+        aria-label="Choose 3 month plan"
+      >
+        <h3 class="text-xl font-bold text-ink mb-2">3 Months</h3>
+        <p class="text-[#4f4636] mb-4">Short-term trial with full access.</p>
+        <p class="text-3xl font-bold text-ink mb-6">
+          {{
+            userInfo?.country === "India"
+              ? (399 | currency : "INR")
+              : (7 | currency : "USD")
+          }}
+        </p>
+      </div>
+
+      <div
+        [ngClass]="{
+          'border-4 border-[#3e3020]': selectedPlan == 6
+        }"
+        (click)="
+          choosePlan(userInfo?.country === 'India' ? 699 : 11, 6);
+          selectedPlan = 6
+        "
+        class="bg-[#fdfaf3] rounded-xl shadow-lg p-6 text-center hover:border-[#3e3020] transition cursor-pointer"
+        tabindex="0"
+        role="button"
+        aria-label="Choose 6 month plan"
+      >
+        <h3 class="text-xl font-bold text-ink mb-2">6 Months</h3>
+        <p class="text-[#4f4636] mb-4">Most Popular. Save more!</p>
+        <p class="text-3xl font-bold text-ink mb-6">
+          {{
+            userInfo?.country === "India"
+              ? (699 | currency : "INR")
+              : (11 | currency : "USD")
+          }}
+        </p>
+      </div>
+
+      <div
+        [ngClass]="{
+          'border-4 border-[#3e3020]': selectedPlan == 12
+        }"
+        (click)="
+          choosePlan(userInfo?.country === 'India' ? 1000 : 17, 12);
+          selectedPlan = 12
+        "
+        class="bg-[#fdfaf3] rounded-xl shadow-lg p-6 text-center hover:border-[#3e3020] transition cursor-pointer"
+        tabindex="0"
+        role="button"
+        aria-label="Choose 1 year plan"
+      >
+        <h3 class="text-xl font-bold text-ink mb-2">1 Year</h3>
+        <p class="text-[#4f4636] mb-4">Best value for long-term users.</p>
+        <p class="text-3xl font-bold text-ink mb-6">
+          {{
+            userInfo?.country === "India"
+              ? (1000 | currency : "INR")
+              : (17 | currency : "USD")
+          }}
+        </p>
+      </div>
+    </div>
+
+    <!-- Call to Action -->
+    <div class="text-center">
+      <p class="text-lg mb-4">
+        Still wondering? Start now and be a part of history in the making.
+      </p>
+      <button
+        (click)="navigateTo()"
+        class="inline-flex items-center px-6 py-3 bg-[#c3b27a] text-[#3e3020] font-semibold rounded-full hover:bg-[#b39f66] transition"
+      >
+        <svg
+          class="w-5 h-5 mr-2"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M17 8l4 4m0 0l-4 4m4-4H3"
+          />
+        </svg>
+        Make Payment
+      </button>
+      <p class="mt-10 text-center text-sm text-gray-600 italic">
+        * Login required to register
+      </p>
+    </div>
+  </div>
+</section>
