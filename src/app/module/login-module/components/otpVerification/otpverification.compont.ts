@@ -21,7 +21,7 @@ import { UserLoginService } from '../../../../_core/services/userLogin.service';
   standalone: true,
   imports: [CommonModule, FormsModule, ReactiveFormsModule],
 
-  templateUrl: './otpVerification.component.html',
+  templateUrl: './otpverification.component.html',
 })
 export class OtpVerificationComponent implements OnInit {
    public returnUrl: any;
