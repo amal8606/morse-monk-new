@@ -1,6 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { SeoService } from '../../_core/services/seo.service';
-import { UserService } from '../../_core/http/api/user.service';
 import {
   FormGroup,
   FormControl,
@@ -12,9 +10,11 @@ import {
 } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-import { UserLoginService } from '../../_core/services/userLogin.service';
 import { ToastrService } from 'ngx-toastr';
 import { HttpClient } from '@angular/common/http';
+import { UserService } from '../../../../_core/http/api/user.service';
+import { SeoService } from '../../../../_core/services/seo.service';
+import { UserLoginService } from '../../../../_core/services/userLogin.service';
 
 @Component({
   selector: 'app-otpVerification',

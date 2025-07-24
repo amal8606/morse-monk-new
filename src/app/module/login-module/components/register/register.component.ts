@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { UserService } from '../../_core/http/api/user.service';
 import {
   FormGroup,
   FormControl,
@@ -12,8 +11,9 @@ import {
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatSelectModule } from '@angular/material/select';
-import { CountryService } from '../../_core/http/api/country.service';
 import { ToastrService } from 'ngx-toastr';
+import { CountryService } from '../../../../_core/http/api/country.service';
+import { UserService } from '../../../../_core/http/api/user.service';
 interface RegisterUserDto {
   firstName: string;
   email: string;

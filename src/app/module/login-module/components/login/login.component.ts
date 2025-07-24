@@ -11,9 +11,10 @@ import {
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { UserService } from '../../_core/http/api/user.service';
-import { SeoService } from '../../_core/services/seo.service';
-import { UserLoginService } from '../../_core/services/userLogin.service';
+import { UserService } from '../../../../_core/http/api/user.service';
+import { SeoService } from '../../../../_core/services/seo.service';
+import { UserLoginService } from '../../../../_core/services/userLogin.service';
+
 
 @Component({
   selector: 'app-login',
