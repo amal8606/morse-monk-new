@@ -11,6 +11,7 @@ import { isPlatformBrowser } from '@angular/common';
 import { catchError, tap, switchMap } from 'rxjs/operators';
 import { UserService } from '../http/api/user.service';
 import { Router } from '@angular/router';
+import { UserLoginService } from '../services/userLogin.service';
 
 export const AuthInterceptor: HttpInterceptorFn = (
   request: HttpRequest<unknown>,
@@ -18,6 +19,7 @@ export const AuthInterceptor: HttpInterceptorFn = (
 ): Observable<HttpEvent<unknown>> => {
   const platformId = inject(PLATFORM_ID);
   const isBrowser = isPlatformBrowser(platformId);
+const userloginService = inject(UserLoginService);
 
   let jwtString: string | null = null;
   let usrInfoString: string | null = null;
@@ -66,12 +68,15 @@ export const AuthInterceptor: HttpInterceptorFn = (
           tap(() => {
             if (isBrowser) {
               router.navigate(['/login']);
+              userloginService.clearUserInfo();
             }
           }),
           catchError((logoutError) => {
             console.error('Logout failed:', logoutError);
             if (isBrowser) {
               router.navigate(['/login']);
+              userloginService.clearUserInfo();
+              
             }
             return throwError(() => logoutError);
           }),

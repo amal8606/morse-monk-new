@@ -1,14 +1,14 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../../environments/environments';
+import { UserLoginService } from '../../services/userLogin.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UserService {
   constructor(private readonly http: HttpClient) {}
-
   public getUsers(): Observable<any> {
     return this.http.get<any>(`${environment.api}/User/users`);
   }

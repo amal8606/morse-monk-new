@@ -1,8 +1,16 @@
-import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { inject, Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 @Injectable({
   providedIn: 'root',
 })
 export class CountryService {
+  public http =inject(HttpClient);
+  public countryUrl = 'https://restcountries.com/v3.1/all?fields=name,cca2,flag,idd';
+  constructor() {}
+  public getCountries():Observable<any[]> {
+    return this.http.get<any[]>(this.countryUrl);
+  }
   public country = [
     { code: 'AF', code3: 'AFG', name: 'Afghanistan', number: '004' },
     { code: 'AL', code3: 'ALB', name: 'Albania', number: '008' },

@@ -56,7 +56,7 @@ export class LoginComponent implements OnInit {
   ngOnInit(): void {
     // Set SEO
     this.returnUrl =
-      this.route.snapshot.queryParamMap.get('returnUrl') ||
+      this.route?.snapshot?.queryParamMap.get('returnUrl') ??'';
       this.seoService.updateMetaTags({
         title: 'Morse Monk - Login',
         description:
@@ -90,6 +90,9 @@ export class LoginComponent implements OnInit {
         if(respo?.role === 'admin') {
           console.log("admin",respo.role)
           this.router.navigate(['/admin']);
+        }
+        else if(this.returnUrl!=''){
+          this.router.navigate([this.returnUrl]);
         }
         else {
           this.router.navigate(['/']);

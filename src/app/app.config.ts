@@ -13,7 +13,12 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
 import { AuthInterceptor } from './_core/Interceptor/token.interceptor';
-
+import {
+  RECAPTCHA_V3_SITE_KEY,
+  RecaptchaV3Module, // Import RecaptchaV3Module
+  RecaptchaLoaderService, // Often useful to import if directly injecting, but typically handled by the module
+  ReCaptchaV3Service
+} from 'ng-recaptcha';
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
@@ -29,6 +34,11 @@ export const appConfig: ApplicationConfig = {
         preventDuplicates: true,
       })
     ),
+     ReCaptchaV3Service, // This typically makes ReCaptchaV3Service available
+    {
+      provide: RECAPTCHA_V3_SITE_KEY,
+      useValue: "6LcVd44rAAAAACGim4Lov0toCQXWllvM2y7K7VI9" // Use your actual v3 site key here
+    },
     
   ],
 };

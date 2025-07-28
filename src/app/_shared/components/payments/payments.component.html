@@ -87,9 +87,19 @@
     </div>
 
     <!-- Submit Button -->
+     <re-captcha
+    siteKey="6LcVd44rAAAAACGim4Lov0toCQXWllvM2y7K7VI9"
+  (resolved)="onCaptchaResolved()"
+    class="mt-4"
+    [size]="'normal'"
+    [theme]="'light'"
+    [type]="'image'"
+  
+  ></re-captcha>
     <button
+    [disabled]="normalForm.invalid || !captchaPassed"
       type="button"
-      class="w-full sm:w-auto bg-[#5e4b2b] text-white font-heading py-2 px-6 rounded hover:bg-[#997950] transition"
+      class="w-full sm:w-auto bg-[#5e4b2b] text-white font-heading py-2 px-6 rounded hover:bg-[#997950] transition disabled:cursor-not-allowed"
       (click)="submitPayment()"
     >
       Submit

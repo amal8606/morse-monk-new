@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import {
   FormGroup,
@@ -28,14 +28,11 @@ import { SeoService } from '../../../../../_core/services/seo.service';
     MatFormFieldModule,
     MatOption,
     MatSelectModule,
+    
   ],
 })
 export class DemoBookingComponent {
-  countries = [
-    { name: 'India', code: 'IN', dialCode: '+91' },
-    { name: 'United States', code: 'US', dialCode: '+1' },
-    { name: 'United Kingdom', code: 'UK', dialCode: '+44' },
-  ];
+  
   public confirm: boolean = false;
   constructor(
     private readonly seoService: SeoService,
@@ -52,13 +49,25 @@ export class DemoBookingComponent {
     status: new FormControl('pending'),
     bookingDate: new FormControl(new Date()),
   });
-  public country: any;
+  public countryList: any;
+selectedCountry: any;
+selectedCountryCode: string = '';
+selectedCode: string = '';
+filteredCountries:any;
 
+dropdownOpen = false;
   ngOnInit(): void {
-    this.country = this.countryService.country.sort((a, b) =>
-      a.name.localeCompare(b.name)
-    );
-
+    // this.country = this.countryService.country.sort((a, b) =>
+    //   a.name.localeCompare(b.name)
+    // );
+this.countryService.getCountries().subscribe((data: any[]) => {
+  this.countryList = (data || []).sort((a, b) => {
+    const nameA = a.name?.common || '';
+    const nameB = b.name?.common || '';
+    return nameA.localeCompare(nameB);
+  });
+  this.filteredCountries = [...this.countryList];
+});
     this.seoService.updateMetaTags({
       title: 'Morse Monk - Demo Booking',
       description:
@@ -69,6 +78,9 @@ export class DemoBookingComponent {
   }
   onRegister() {
     this.isLoading = true;
+    let {phone} =this.normalForm.value;
+    this.normalForm.get('phone')?.setValue(`${this.selectedCode}${phone}`);
+    this.normalForm.get('bookingDate')?.setValue(new Date());
     this.normalForm.get('bookingDate')?.setValue(new Date());
     this.normalForm.get('status')?.setValue('pending');
     this.bookingService.postDemoBooking(this.normalForm.value).subscribe({
@@ -81,5 +93,26 @@ export class DemoBookingComponent {
         this.isLoading = false;
       },
     });
+  }
+  //countries
+  @ViewChild('searchInput') searchInputRef!: ElementRef;
+  selectCountry(country: any): void {
+  this.selectedCountry = country;
+  this.selectedCode = `${country.idd.root} ${country.idd.suffixes[0]}`
+  this.selectedCountryCode = country.cca2;
+  this.dropdownOpen = false;
+    this.normalForm.get('country')?.setValue(country.name.common);
+
+}  filterCountries(searchText: string) {
+    const term = searchText.toLowerCase();
+    this.filteredCountries = this.countryList.filter((country:any) =>
+      country.name.common.toLowerCase().includes(term)
+    );
+  }
+    toggleDropdown() {
+    this.dropdownOpen = !this.dropdownOpen;
+    if (this.dropdownOpen) {
+      setTimeout(() => this.searchInputRef?.nativeElement?.focus(), 100);
+    }
   }
 }

@@ -30,15 +30,47 @@
             required
             autocomplete="email"
           />
-          <div *ngIf="otpForm.get('email')?.invalid && otpForm.get('email')?.touched" class="text-red-600 text-sm mt-1">
+          <div
+            *ngIf="
+              otpForm.get('email')?.invalid && otpForm.get('email')?.touched
+            "
+            class="text-red-600 text-sm mt-1"
+          >
             Valid email is required
           </div>
         </div>
 
-        <button type="button" (click)="sendOtp()" class="bg-blue-600 text-white px-4 py-2 rounded mb-3 hover:bg-blue-700 transition">
+        <button
+        [disabled]="otpForm.get('email')?.invalid"
+          type="button"
+          *ngIf="!ottpSend"
+          (click)="sendOtp()"
+          class="bg-blue-600 text-white px-4 py-2 rounded mb-3 hover:bg-blue-700 transition disabled:cursor-not"
+        >
           Send OTP
         </button>
 
+        <button
+          type="button"
+          *ngIf="ottpSend"
+          class="bg-blue-600 text-white px-4 py-2 rounded mb-3 hover:bg-blue-700 transition"
+        >
+          <svg class="animate-spin h-5 w-5 mr-2 inline" viewBox="0 0 24 24">
+            <circle
+              class="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              stroke-width="4"
+            ></circle>
+            <path
+              class="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 100 16v-4l-3 3 3 3v-4a8 8 0 01-8-8z"
+            />
+          </svg>
+        </button>
         <!-- <div class="text-sm text-gray-600 mb-4">
           Didn’t receive OTP?
           <button
@@ -63,13 +95,44 @@
             required
             maxlength="6"
           />
-          <div *ngIf="otpForm.get('otp')?.invalid && otpForm.get('otp')?.touched" class="text-red-600 text-sm mt-1">
+          <div
+            *ngIf="otpForm.get('otp')?.invalid && otpForm.get('otp')?.touched"
+            class="text-red-600 text-sm mt-1"
+          >
             6-digit OTP is required
           </div>
         </div>
 
-        <button type="submit" class="bg-green-600 disabled:bg-green-500 text-white px-4 py-2 w-full rounded hover:bg-green-700 transition" [disabled]="isSubmitting">
+        <button
+       [disabled]="otpForm.invalid || isSubmitting"
+          type="submit"
+          *ngIf="!isVerifyOtp"
+          class="bg-green-600 disabled:bg-green-500 text-white px-4 py-2 w-full rounded hover:bg-green-700 transition disabled:cursor-not-allowed"
+          [disabled]="isSubmitting"
+        >
           Verify OTP
+        </button>
+
+        <button
+          *ngIf="isVerifyOtp"
+          type="submit"
+          class="bg-green-600 disabled:bg-green-500 text-white px-4 py-2 w-full rounded hover:bg-green-700 transition"
+        >
+          <svg class="animate-spin h-5 w-5 mr-2 inline" viewBox="0 0 24 24">
+            <circle
+              class="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              stroke-width="4"
+            ></circle>
+            <path
+              class="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 100 16v-4l-3 3 3 3v-4a8 8 0 01-8-8z"
+            />
+          </svg>
         </button>
       </form>
 
@@ -78,7 +141,10 @@
 
     <!-- Password Update Section -->
     <div *ngIf="updateModal" class="w-full max-w-md">
-      <form [formGroup]="registrationForm" class="space-y-5 bg-[#fdfaf4] p-8 rounded-lg shadow-lg">
+      <form
+        [formGroup]="registrationForm"
+        class="space-y-5 bg-[#fdfaf4] p-8 rounded-lg shadow-lg"
+      >
         <h2 class="text-2xl font-semibold text-center mb-4">Update Password</h2>
 
         <!-- Password Field -->
@@ -91,10 +157,19 @@
             required
             autocomplete="new-password"
           />
-          <span class="absolute top-3 right-3 cursor-pointer" (click)="togglePasswordVisibility('passwordHash')">
-            👁️
+          <span
+            class="absolute top-3 right-3 cursor-pointer"
+            (click)="togglePasswordVisibility('passwordHash')"
+          >
+            👁
           </span>
         </div>
+        <div *ngIf="registrationForm.get('passwordHash')?.invalid && registrationForm.get('passwordHash')?.touched" class="text-red-500 text-xs mt-1">
+  <div *ngIf="registrationForm.get('passwordHash')?.errors?.['required']">Password is required</div>
+  <div *ngIf="registrationForm.get('passwordHash')?.errors?.['pattern']">
+    Must be at least 8 characters, include upper, lower, number, and special character.
+  </div>
+</div>
 
         <!-- Confirm Password Field -->
         <div class="relative">
@@ -106,10 +181,16 @@
             required
             autocomplete="new-password"
           />
-          <span class="absolute top-3 right-3 cursor-pointer" (click)="togglePasswordVisibility('confirmPassword')">
-            👁️
+          <span
+            class="absolute top-3 right-3 cursor-pointer"
+            (click)="togglePasswordVisibility('confirmPassword')"
+          >
+            👁
           </span>
         </div>
+            <div *ngIf="registrationForm.errors?.['passwordMismatch'] && registrationForm.get('confirmPassword')?.touched" class="text-red-500 text-xs">
+  Passwords do not match
+</div>
 
         <div *ngIf="wrongPassword" class="text-red-500 text-xs">
           * Passwords do not match
@@ -117,10 +198,11 @@
 
         <!-- Submit Button -->
         <button
+        [disabled]="registrationForm.invalid"
           *ngIf="!isLoading"
           type="submit"
           (click)="onSubmit()"
-          class="w-full bg-[#5e4b2b] text-white py-2 rounded hover:bg-[#997950] transition"
+          class="w-full bg-[#5e4b2b] text-white py-2 rounded hover:bg-[#997950] transition disabled:cursor-not-allowed"
         >
           Update Password
         </button>
@@ -132,8 +214,19 @@
           disabled
         >
           <svg class="animate-spin h-5 w-5 mr-2 inline" viewBox="0 0 24 24">
-            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 100 16v-4l-3 3 3 3v-4a8 8 0 01-8-8z" />
+            <circle
+              class="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              stroke-width="4"
+            ></circle>
+            <path
+              class="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 100 16v-4l-3 3 3 3v-4a8 8 0 01-8-8z"
+            />
           </svg>
           Loading...
         </button>

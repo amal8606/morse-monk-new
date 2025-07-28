@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import {
   FormGroup,
   FormControl,
@@ -14,15 +14,6 @@ import { MatSelectModule } from '@angular/material/select';
 import { ToastrService } from 'ngx-toastr';
 import { CountryService } from '../../../../_core/http/api/country.service';
 import { UserService } from '../../../../_core/http/api/user.service';
-interface RegisterUserDto {
-  firstName: string;
-  email: string;
-  phoneNumber: string;
-  country: string;
-  passwordHash: string;
-  createdAt: string;
-  dateOfBirth: string;
-}
 
 @Component({
   selector: 'app-register',
@@ -38,24 +29,52 @@ export class RegisterComponent {
     private readonly countryService: CountryService,
     private toastr: ToastrService
   ) {}
+
   registrationForm!: FormGroup;
-  country: any;
-  isLoading: boolean = false;
+  countryList: any[] = [];
+  filteredCountries: any[] = [];
+  selectedCountry: any;
+  selectedCountryCode = '';
+  selectedCode = '';
+  dropdownOpen = false;
+  isLoading = false;
+  showPassword = false;
+  showConfirmPassword = false;
+  formData: any;
+  wrongPassword: any;
+
+  @ViewChild('searchInput') searchInputRef!: ElementRef;
+
   ngOnInit() {
-    this.country = this.countryService.country.sort((a, b) =>
-      a.name.localeCompare(b.name)
-    );
-    this.crearteRegistration();
+    this.countryService.getCountries().subscribe((data: any[]) => {
+      this.countryList = (data || []).sort((a, b) =>
+        (a.name?.common || '').localeCompare(b.name?.common || '')
+      );
+      this.filteredCountries = [...this.countryList];
+    });
+
+    this.createRegistrationForm();
   }
 
-  crearteRegistration(): void {
+  createRegistrationForm(): void {
     this.registrationForm = this.formBuilder.group(
       {
         fullName: new FormControl('', Validators.required),
-        email: new FormControl('', Validators.required),
-        phoneNumber: new FormControl('', Validators.required),
+        email: new FormControl('', [
+          Validators.required,
+          Validators.email,
+        ]),
+        phoneNumber: new FormControl('', [Validators.required,
+          Validators.maxLength(10)]
+        ),
         country: new FormControl('', Validators.required),
-        passwordHash: new FormControl('', Validators.required),
+        passwordHash: new FormControl('', [
+          Validators.required,
+          Validators.minLength(8),
+          Validators.pattern(
+            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?#&])[A-Za-z\d@$!%*?#&]{8,}$/
+          ),
+        ]),
         confirmPassword: new FormControl('', Validators.required),
         createdAt: new FormControl(new Date()),
         dateOfBirth: new FormControl('', Validators.required),
@@ -73,47 +92,11 @@ export class RegisterComponent {
     const passwordHash = control.get('passwordHash');
     const confirmPassword = control.get('confirmPassword');
 
-    if (
-      passwordHash &&
-      confirmPassword &&
-      passwordHash.value !== confirmPassword.value
-    ) {
+    if (passwordHash && confirmPassword && passwordHash.value !== confirmPassword.value) {
       return { passwordMismatch: true };
     }
 
     return null;
-  }
-  showPassword: boolean = false;
-  showConfirmPassword: boolean = false;
-  public formData: any;
-  wrongPassword: any;
-  onSubmit(): void {
-    if (this.registrationForm.invalid) {
-      this.wrongPassword = this.passwordMatchValidator;
-
-      return;
-    }
-    this.wrongPassword = false;
-
-    this.formData = {
-      ...this.registrationForm.value,
-      createdAt: new Date(),
-      userRole: 'student',
-    };
-    this.isLoading = true;
-    this.userService.postUser(this.formData).subscribe({
-      next: () => {
-        this.isLoading = false;
-        this.toastr.success('Register Successfully..');
-        this.router.navigate(['/login']);
-      },
-      error: (error) => {
-        if (error.status == 409) {
-          this.toastr.error('already used email or phone number');
-          this.isLoading = false;
-        }
-      },
-    });
   }
 
   togglePasswordVisibility(field: string): void {
@@ -122,10 +105,70 @@ export class RegisterComponent {
     } else if (field === 'confirmPassword') {
       this.showConfirmPassword = !this.showConfirmPassword;
     }
+  }
 
-    const formControl = this.registrationForm.get(field);
-    if (formControl) {
-      formControl.setValue(formControl.value);
+  selectCountry(country: any): void {
+    this.selectedCountry = country;
+    this.selectedCode = `${country.idd?.root || ''}${country.idd?.suffixes?.[0] || ''}`;
+    this.selectedCountryCode = country.cca2;
+    this.dropdownOpen = false;
+    this.registrationForm.get('country')?.setValue(country.name?.common || '');
+  }
+
+  filterCountries(searchText: string) {
+    const term = searchText.toLowerCase();
+    this.filteredCountries = this.countryList.filter((country: any) =>
+      country.name?.common?.toLowerCase().includes(term)
+    );
+  }
+
+  toggleDropdown() {
+    this.dropdownOpen = !this.dropdownOpen;
+    if (this.dropdownOpen) {
+      setTimeout(() => this.searchInputRef?.nativeElement?.focus(), 100);
     }
+  }
+
+  onSubmit(): void {
+    if (this.registrationForm.invalid) {
+      this.registrationForm.markAllAsTouched();
+      return;
+    }
+
+    const phoneNumber = `${this.selectedCode}${this.registrationForm.get('phoneNumber')?.value}`;
+    this.registrationForm.get('phoneNumber')?.setValue(phoneNumber);
+
+    this.formData = {
+      ...this.registrationForm.value,
+      createdAt: new Date(),
+      userRole: 'student',
+    };
+
+    this.isLoading = true;
+    this.userService.postUser(this.formData).subscribe({
+      next: () => {
+        this.isLoading = false;
+        this.toastr.success('Registered successfully!');
+        this.router.navigate(['/login']);
+      },
+      error: (error) => {
+        if (error.status === 409) {
+          this.toastr.error('Email or phone number already in use.');
+        }
+        this.isLoading = false;
+      },
+    });
+  }
+
+  get email() {
+    return this.registrationForm.get('email');
+  }
+
+  get passwordHash() {
+    return this.registrationForm.get('passwordHash');
+  }
+
+  get confirmPassword() {
+    return this.registrationForm.get('confirmPassword');
   }
 }

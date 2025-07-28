@@ -1,30 +1,29 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, ViewChild } from '@angular/core';
 import {
   FormControl,
   FormGroup,
+  FormsModule,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatStepperModule } from '@angular/material/stepper';
 import { MatButtonModule } from '@angular/material/button';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatChipsModule } from '@angular/material/chips';
-import { MatSelectModule } from '@angular/material/select';
-import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
 import { MatRadioModule } from '@angular/material/radio';
-import { NgxCaptchaModule } from 'ngx-captcha';
+import { MatSelectModule } from '@angular/material/select';
+import { MatStepperModule } from '@angular/material/stepper';
+import { Router } from '@angular/router';
+import { RecaptchaModule } from "ng-recaptcha";
 import { BookingService } from '../../../../../_core/http/api/booking.service';
 import { CountryService } from '../../../../../_core/http/api/country.service';
 import { MmdCenterService } from '../../../../../_core/http/api/mmdCenter.service';
 import { SeoService } from '../../../../../_core/services/seo.service';
 import { UserLoginService } from '../../../../../_core/services/userLogin.service';
 import { PaymentStatusComponent } from '../../../../../_shared/components/confirm-payment/confirm.compoent';
-
 @Component({
   selector: 'app-enroll-for-class',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -44,7 +43,7 @@ import { PaymentStatusComponent } from '../../../../../_shared/components/confir
     MatSelectModule,
     PaymentStatusComponent,
     MatRadioModule,
-    NgxCaptchaModule,
+    RecaptchaModule,
   ],
 })
 export class EnrollClassComponent {
@@ -63,12 +62,12 @@ export class EnrollClassComponent {
   dateSelectionControl = new FormControl('');
   paymentMethod: any;
 
-  countries = [
-    { name: 'India', code: 'IN', dialCode: '+91' },
-    { name: 'United States', code: 'US', dialCode: '+1' },
-    { name: 'United Kingdom', code: 'UK', dialCode: '+44' },
-  ];
-
+  public countryList: any;
+selectedCountry: any;
+selectedCountryCode: string = '';
+selectedCode: string = '';
+filteredCountries:any;
+dropdownOpen = false;
   mmdCentres: any;
 
   public normalForm: FormGroup = new FormGroup({
@@ -108,9 +107,17 @@ export class EnrollClassComponent {
   public country: any;
   public userInfo: any;
   ngOnInit(): void {
-    this.country = this.countryService.country.sort((a, b) =>
-      a.name.localeCompare(b.name)
-    );
+   this.countryService.getCountries().subscribe((data: any[]) => {
+  this.countryList = (data || []).sort((a, b) => {
+    const nameA = a.name?.common || '';
+    const nameB = b.name?.common || '';
+    return nameA.localeCompare(nameB);
+  });
+   this.selectedCountry = this.countryList?.find((country: any) => {
+      return country.name?.common === this.userInfo.country;})
+      console.log(this.selectedCountry);
+  this.filteredCountries = [...this.countryList];
+});
     this.mmdCenterService.getMmdCenter().subscribe({
       next: (respo) => {
         this.mmdCentres = respo;
@@ -127,6 +134,7 @@ export class EnrollClassComponent {
       country: this.userInfo.country,
       userId: this.userInfo.userId,
     });
+   
     this.mmdSignalForm.patchValue({
       name: this.userInfo.userName,
       email: this.userInfo.userEmail,
@@ -246,4 +254,24 @@ export class EnrollClassComponent {
     const returnUrl = this.route.url; // gets current route
     this.route.navigate(['/login'], { queryParams: { returnUrl } });
   }
+  @ViewChild('searchInput') searchInputRef!: ElementRef;
+    selectCountry(country: any): void {
+    this.selectedCountry = country;
+    this.selectedCode = `${country.idd.root} ${country.idd.suffixes[0]}`
+    this.selectedCountryCode = country.cca2;
+    this.normalForm.get('country')?.setValue(country.name.common);
+    this.mmdSignalForm.get('country')?.setValue(country.name.common);
+    this.dropdownOpen = false;
+  }  filterCountries(searchText: string) {
+      const term = searchText.toLowerCase();
+      this.filteredCountries = this.countryList.filter((country:any) =>
+        country.name.common.toLowerCase().includes(term)
+      );
+    }
+      toggleDropdown() {
+      this.dropdownOpen = !this.dropdownOpen;
+      if (this.dropdownOpen) {
+        setTimeout(() => this.searchInputRef?.nativeElement?.focus(), 100);
+      }
+    }
 }

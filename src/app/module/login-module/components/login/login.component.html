@@ -35,9 +35,10 @@
       />
 
       <button
+      [disabled]="normalForm.invalid"
         type="submit"
         (click)="login()"
-        class="w-full bg-[#5e4b2b] text-white py-2 rounded hover:bg-[#997950] transition"
+        class="w-full bg-[#5e4b2b] text-white py-2 rounded hover:bg-[#997950] transition disabled:cursor-not-allowed"
       >
         Login
       </button>

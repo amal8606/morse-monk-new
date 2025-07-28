@@ -21,20 +21,20 @@ import { UserLoginService } from '../../../../_core/services/userLogin.service';
   standalone: true,
   imports: [CommonModule, FormsModule, ReactiveFormsModule],
 
-  templateUrl: './otpverification.component.html',
+  templateUrl: './otpVerification.component.html',
 })
 export class OtpVerificationComponent implements OnInit {
-   public returnUrl: any;
-   otpForm: FormGroup;
+  public returnUrl: any;
+  otpForm: FormGroup;
   message: string = '';
   isSubmitting = false;
   resendDisabled = true;
   countdown = 30;
-  updateModal:boolean=false;
+  updateModal: boolean = false;
   timer: any;
-  public user:any;
+  public user: any;
   isLoading: boolean = false;
-   showPassword: boolean = false;
+  showPassword: boolean = false;
   showConfirmPassword: boolean = false;
   public formData: any;
   wrongPassword: any;
@@ -46,9 +46,10 @@ export class OtpVerificationComponent implements OnInit {
     private readonly userLoginService: UserLoginService,
     private route: ActivatedRoute,
     private readonly toastr: ToastrService,
-    private fb: FormBuilder, private http: HttpClient
+    private fb: FormBuilder,
+    private http: HttpClient
   ) {
-     this.otpForm = this.fb.group({
+    this.otpForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       otp: ['', [Validators.required, Validators.pattern(/^[0-9]{6}$/)]],
     });
@@ -57,9 +58,8 @@ export class OtpVerificationComponent implements OnInit {
   public normalForm: FormGroup = new FormGroup({
     emailOrNumber: new FormControl('', Validators.required),
     password: new FormControl('', Validators.required),
-    deviceType: new FormControl(''), // will be set on init
   });
- 
+
   ngOnInit(): void {
     // Set SEO
     this.returnUrl =
@@ -72,15 +72,16 @@ export class OtpVerificationComponent implements OnInit {
           'Morse, Online, Interactive, Classes, MMD signal exam, Ham radio exam, Morse visual signal, Reception',
       });
 
-    const deviceType = this.getDeviceType();
-    this.normalForm.get('deviceType')?.setValue(deviceType);
-     this.registrationForm = this.fb.group(
+    this.registrationForm = this.fb.group(
       {
-       
-        passwordHash: new FormControl('', Validators.required),
+        passwordHash: new FormControl('',[
+          Validators.required,
+          Validators.minLength(8),
+          Validators.pattern(
+            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?#&])[A-Za-z\d@$!%*?#&]{8,}$/
+          ),
+        ]),
         confirmPassword: new FormControl('', Validators.required),
-     
-        
       },
       {
         validator: this.passwordMatchValidator,
@@ -88,30 +89,27 @@ export class OtpVerificationComponent implements OnInit {
     );
   }
 
-  private getDeviceType(): string {
-    const nav = navigator as any;
+  ottpSend: boolean = false;
+  isVerifyOtp: boolean = false;
 
-    if (nav.userAgentData) {
-      const platform = nav.userAgentData.platform;
-      const mobile = nav.userAgentData.mobile;
-      return `${platform} - ${mobile ? 'Mobile' : 'Desktop'}`;
-    } else {
-      return navigator.userAgent;
-    }
-  }
-
-
-
-   sendOtp() {
+  sendOtp() {
+    this.ottpSend = true;
     const email = this.otpForm.get('email')?.value;
     this.startResendTimer();
     this.userService.CreateOtp(email).subscribe({
-      next: () => this.message = 'OTP sent to your email.',
-      error: () => this.message = 'Failed to send OTP.'
+      next: () => {
+        this.message = 'OTP sent to your email.';
+        this.ottpSend = false;
+      },
+      error: () => {this.message = 'Failed to send OTP.';
+        this.ottpSend=false;
+      },
+      complete: () => (this.ottpSend = false),
     });
   }
 
   verifyOtp() {
+    this.isVerifyOtp = true;
     if (this.otpForm.invalid) return;
 
     this.isSubmitting = true;
@@ -119,20 +117,25 @@ export class OtpVerificationComponent implements OnInit {
 
     this.userService.VerifyOtp(email, otp).subscribe({
       next: (res) => {
-this.user=res;
+        this.user = res;
+        this.isVerifyOtp = false;
+
         this.message = 'OTP verified successfully.';
         this.isSubmitting = false;
         setTimeout(() => {
-            this.updateModal=true;
+          this.updateModal = true;
         }, 2000);
       },
       error: () => {
         this.message = 'Invalid or expired OTP.';
         this.isSubmitting = false;
-      }
+      },
+      complete: () => {
+        this.isVerifyOtp = false;
+      },
     });
   }
-   startResendTimer() {
+  startResendTimer() {
     this.resendDisabled = true;
     this.countdown = 30;
 
@@ -144,7 +147,7 @@ this.user=res;
       }
     }, 1000);
   }
-   togglePasswordVisibility(field: string): void {
+  togglePasswordVisibility(field: string): void {
     if (field === 'passwordHash') {
       this.showPassword = !this.showPassword;
     } else if (field === 'confirmPassword') {
@@ -156,23 +159,23 @@ this.user=res;
       formControl.setValue(formControl.value);
     }
   }
-    passwordMatchValidator(
-      control: AbstractControl
-    ): { [key: string]: boolean } | null {
-      const passwordHash = control.get('passwordHash');
-      const confirmPassword = control.get('confirmPassword');
-  
-      if (
-        passwordHash &&
-        confirmPassword &&
-        passwordHash.value !== confirmPassword.value
-      ) {
-        return { passwordMismatch: true };
-      }
-  
-      return null;
+  passwordMatchValidator(
+    control: AbstractControl
+  ): { [key: string]: boolean } | null {
+    const passwordHash = control.get('passwordHash');
+    const confirmPassword = control.get('confirmPassword');
+
+    if (
+      passwordHash &&
+      confirmPassword &&
+      passwordHash.value !== confirmPassword.value
+    ) {
+      return { passwordMismatch: true };
     }
-   onSubmit(): void {
+
+    return null;
+  }
+  onSubmit(): void {
     if (this.registrationForm.invalid) {
       this.wrongPassword = this.passwordMatchValidator;
 
@@ -180,7 +183,7 @@ this.user=res;
     }
     this.wrongPassword = false;
 
-   this.user.passwordHash=this.registrationForm?.get("passwordHash")?.value;
+    this.user.passwordHash = this.registrationForm?.get('passwordHash')?.value;
     this.isLoading = true;
     this.userService.editUser(this.user).subscribe({
       next: () => {
@@ -196,5 +199,4 @@ this.user=res;
       },
     });
   }
-
 }

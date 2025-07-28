@@ -7,6 +7,7 @@ import { EnrollClassComponent } from './components/booking/enroll/enroll.compone
 import { IntegratorMessangerComponent } from './components/integrator/components/integrator-messanger';
 import { IntegratorComponent } from './components/integrator/integrator.component';
 import { CommonComponent } from './pages/common.component';
+import { PaymentComponent } from '../../_shared/components/payments/payments.component';
 
 const routes: Routes = [{ path: '', component: CommonComponent ,
    children: [
@@ -28,6 +29,10 @@ const routes: Routes = [{ path: '', component: CommonComponent ,
       path:"message",
       component:IntegratorMessangerComponent
     },
+    {
+      path:"payment",
+      component:PaymentComponent
+    }
     ]
 },
   

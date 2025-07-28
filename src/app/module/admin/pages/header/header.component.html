@@ -61,6 +61,14 @@
         >
       </li>
     </ul>
+    <!-- Logout Button -->
+    <button
+      (click)="logOut()"
+      class="bg-[#e73333] ml-5 text-white font-medium px-5 py-2 rounded-full hover:bg-[#ff4f4f] transition-colors duration-200 md:inline-flex hidden"
+    >
+      Logout
+    </button>
+
     <!-- Dropdown for md and up -->
     <div class="relative md:hidden inline-block">
       <button
@@ -88,18 +96,26 @@
         class="absolute right-0 mt-2 w-48 bg-white text-[#2d2d72] rounded-md shadow-lg z-10"
       >
         <li>
-          <a href="/admin" class="block px-4 py-2 hover:bg-[#ffe082]/20">Home</a>
+          <a href="/admin" class="block px-4 py-2 hover:bg-[#ffe082]/20"
+            >Home</a
+          >
         </li>
         <li>
-          <a href="/admin/users" class="block px-4 py-2 hover:bg-[#ffe082]/20">User</a>
+          <a href="/admin/users" class="block px-4 py-2 hover:bg-[#ffe082]/20"
+            >User</a
+          >
         </li>
         <li>
-          <a href="/admin/announcements" class="block px-4 py-2 hover:bg-[#ffe082]/20"
+          <a
+            href="/admin/announcements"
+            class="block px-4 py-2 hover:bg-[#ffe082]/20"
             >Announcement</a
           >
         </li>
         <li>
-          <a href="/admin/mmd-center " class="block px-4 py-2 hover:bg-[#ffe082]/20"
+          <a
+            href="/admin/mmd-center "
+            class="block px-4 py-2 hover:bg-[#ffe082]/20"
             >MMD Center</a
           >
         </li>
@@ -114,6 +130,14 @@
           <a href="/admin/enquiry" class="block px-4 py-2 hover:bg-[#ffe082]/20"
             >Enquiry</a
           >
+        </li>
+        <li>
+          <button
+            (click)="logOut()"
+            class="bg-[#e73333] text-white w-full font-medium px-5 py-2 hover:bg-[#ff4f4f] transition-colors duration-200"
+          >
+            Logout
+          </button>
         </li>
       </ul>
     </div>

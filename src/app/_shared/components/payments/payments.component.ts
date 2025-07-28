@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, inject, Input } from '@angular/core';
 import { PaymentStatusComponent } from '../confirm-payment/confirm.compoent';
 import { ActivatedRoute } from '@angular/router';
+
 import {
   FormGroup,
   FormControl,
@@ -15,6 +16,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { SubscriptionService } from '../../../_core/http/api/subscription.service';
 import { UserService } from '../../../_core/http/api/user.service';
+import { RecaptchaModule } from "ng-recaptcha";
+import { ReCaptchaV3Service } from 'ng-recaptcha';
 
 @Component({
   selector: 'app-payment',
@@ -29,6 +32,7 @@ import { UserService } from '../../../_core/http/api/user.service';
     MatFormFieldModule,
     MatInputModule,
     MatDatepickerModule,
+    RecaptchaModule
   ],
 })
 export class PaymentComponent {
@@ -40,6 +44,7 @@ export class PaymentComponent {
     private readonly subscriptionService: SubscriptionService,
     private readonly userService: UserService
   ) {}
+  public recapchaService =inject(ReCaptchaV3Service);
   public normalForm: FormGroup = new FormGroup({
     userId: new FormControl(''),
     status: new FormControl(''),
@@ -88,4 +93,20 @@ export class PaymentComponent {
       complete: () => {},
     });
   }
+  captchaPassed = false;
+
+onCaptchaResolved() {
+  //console.log(token)
+  //this.captchaPassed = !!token;
+   this.recapchaService.execute('myAction').subscribe(
+      (token) => {
+  this.captchaPassed = !this.captchaPassed;
+
+      },
+      (error) => {
+        console.log(`Recaptcha v3 error:`, error);
+      }
+    );
+}
+  
 }

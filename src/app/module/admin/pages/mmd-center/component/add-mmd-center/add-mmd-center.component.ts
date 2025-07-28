@@ -10,6 +10,7 @@ import { AnnouncementService } from '../../../../../../_core/http/api/announceme
 import { CommonModule } from '@angular/common';
 import { MmdCenterService } from '../../../../../../_core/http/api/mmdCenter.service';
 import { ToastrService } from 'ngx-toastr';
+import { UserLoginService } from '../../../../../../_core/services/userLogin.service';
 
 @Component({
   selector: 'app-add-mmd-center',
@@ -26,13 +27,17 @@ export class AddMmdCenterComponent {
     centerName: new FormControl('', Validators.required),
     createdAt: new FormControl(''),
   });
-  constructor(private readonly mmdCenterService: MmdCenterService,
-    private readonly toastr:ToastrService
+  constructor(
+    private readonly mmdCenterService: MmdCenterService,
+    private readonly toastr: ToastrService,
+    private readonly userLoginService: UserLoginService
   ) {}
   public loggedUserId: any;
   public isLoading: boolean = false;
   ngOnInit() {
-    this.loggedUserId = 1;
+    this.userLoginService.userInfo$.subscribe((user) => {
+      this.loggedUserId = user.userId;
+    });
     this.normalForm.get('createdAt')?.setValue(new Date());
   }
 
@@ -42,11 +47,11 @@ export class AddMmdCenterComponent {
       next: () => {
         this.closeModel();
         this.isLoading = false;
-        this.toastr.success("Success");
+        this.toastr.success('Success');
       },
       error: () => {
         this.isLoading = false;
-        this.toastr.error("error,please try again later");
+        this.toastr.error('error,please try again later');
       },
       complete: () => {
         this.closeModel();
@@ -57,5 +62,5 @@ export class AddMmdCenterComponent {
 
   public closeModel() {
     this.onClick.emit();
-  }
+  }
 }

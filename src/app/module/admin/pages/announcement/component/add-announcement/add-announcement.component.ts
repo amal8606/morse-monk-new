@@ -9,6 +9,7 @@ import {
   ReactiveFormsModule,
 } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
+import { UserLoginService } from '../../../../../../_core/services/userLogin.service';
 
 @Component({
   selector: 'app-add-announcement',
@@ -28,13 +29,17 @@ export class AddAnnouncementComponent {
     createdBy: new FormControl(1),
     isActive: new FormControl(1),
   });
-  constructor(private readonly announcementService: AnnouncementService,
-        private toaster:ToastrService
+  constructor(
+    private readonly announcementService: AnnouncementService,
+    private toaster: ToastrService,
+    private readonly userLoginService: UserLoginService
   ) {}
   public loggedUserId: any;
   public isLoading: boolean = false;
   ngOnInit() {
-    this.loggedUserId = 1;
+    this.userLoginService.userInfo$.subscribe((user) => {
+      this.loggedUserId = user.userId;
+    });
     this.normalForm.get('createdBy')?.setValue(this.loggedUserId);
     this.normalForm.get('createdAt')?.setValue(new Date());
 
@@ -47,11 +52,11 @@ export class AddAnnouncementComponent {
       next: () => {
         this.closeModel();
         this.isLoading = false;
-        this.toaster.success("created successfully")
+        this.toaster.success('created successfully');
       },
       error: () => {
-        this.isLoading=false;
-        this.toaster.error("error, try again")
+        this.isLoading = false;
+        this.toaster.error('error, try again');
       },
       complete: () => {
         this.closeModel();
@@ -62,5 +67,5 @@ export class AddAnnouncementComponent {
 
   public closeModel() {
     this.onClick.emit();
-  }
+  }
 }
