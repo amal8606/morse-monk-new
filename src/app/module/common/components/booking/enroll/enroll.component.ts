@@ -1,5 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, ElementRef, ViewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  ViewChild,
+} from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -17,13 +22,16 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
 import { MatStepperModule } from '@angular/material/stepper';
 import { Router } from '@angular/router';
-import { RecaptchaModule } from "ng-recaptcha";
 import { BookingService } from '../../../../../_core/http/api/booking.service';
 import { CountryService } from '../../../../../_core/http/api/country.service';
 import { MmdCenterService } from '../../../../../_core/http/api/mmdCenter.service';
 import { SeoService } from '../../../../../_core/services/seo.service';
 import { UserLoginService } from '../../../../../_core/services/userLogin.service';
 import { PaymentStatusComponent } from '../../../../../_shared/components/confirm-payment/confirm.compoent';
+import { NgxCaptchaModule } from 'ngx-captcha';
+import { RecaptchaFormsModule, RecaptchaModule } from 'ng-recaptcha-2';
+import { response } from 'express';
+import { ReCaptchaService } from '../../../../../_core/http/api/reCaptcha.service';
 @Component({
   selector: 'app-enroll-for-class',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -44,6 +52,8 @@ import { PaymentStatusComponent } from '../../../../../_shared/components/confir
     PaymentStatusComponent,
     MatRadioModule,
     RecaptchaModule,
+    RecaptchaFormsModule,
+    NgxCaptchaModule,
   ],
 })
 export class EnrollClassComponent {
@@ -53,7 +63,8 @@ export class EnrollClassComponent {
     private readonly bookingService: BookingService,
     private readonly countryService: CountryService,
     private readonly mmdCenterService: MmdCenterService,
-    private readonly userLoginService: UserLoginService
+    private readonly userLoginService: UserLoginService,
+    private readonly reCaptchaService: ReCaptchaService
   ) {}
   selectedDialCode: string = '+91';
   selectedSignalDialCode: string = '+91';
@@ -63,11 +74,11 @@ export class EnrollClassComponent {
   paymentMethod: any;
 
   public countryList: any;
-selectedCountry: any;
-selectedCountryCode: string = '';
-selectedCode: string = '';
-filteredCountries:any;
-dropdownOpen = false;
+  selectedCountry: any;
+  selectedCountryCode: string = '';
+  selectedCode: string = '';
+  filteredCountries: any;
+  dropdownOpen = false;
   mmdCentres: any;
 
   public normalForm: FormGroup = new FormGroup({
@@ -107,17 +118,18 @@ dropdownOpen = false;
   public country: any;
   public userInfo: any;
   ngOnInit(): void {
-   this.countryService.getCountries().subscribe((data: any[]) => {
-  this.countryList = (data || []).sort((a, b) => {
-    const nameA = a.name?.common || '';
-    const nameB = b.name?.common || '';
-    return nameA.localeCompare(nameB);
-  });
-   this.selectedCountry = this.countryList?.find((country: any) => {
-      return country.name?.common === this.userInfo.country;})
+    this.countryService.getCountries().subscribe((data: any[]) => {
+      this.countryList = (data || []).sort((a, b) => {
+        const nameA = a.name?.common || '';
+        const nameB = b.name?.common || '';
+        return nameA.localeCompare(nameB);
+      });
+      this.selectedCountry = this.countryList?.find((country: any) => {
+        return country.name?.common === this.userInfo.country;
+      });
       console.log(this.selectedCountry);
-  this.filteredCountries = [...this.countryList];
-});
+      this.filteredCountries = [...this.countryList];
+    });
     this.mmdCenterService.getMmdCenter().subscribe({
       next: (respo) => {
         this.mmdCentres = respo;
@@ -134,7 +146,7 @@ dropdownOpen = false;
       country: this.userInfo.country,
       userId: this.userInfo.userId,
     });
-   
+
     this.mmdSignalForm.patchValue({
       name: this.userInfo.userName,
       email: this.userInfo.userEmail,
@@ -203,10 +215,38 @@ dropdownOpen = false;
     }
   }
 
-  captchaResponse: string = '';
+  captchaToken: string = '';
 
-  onCaptchaResolved(captchaResponse: string): void {
-    this.captchaResponse = captchaResponse;
+  siteKey: string = '6LcVd44rAAAAACGim4Lov0toCQXWllvM2y7K7VI9';
+  onCaptchaResolved(event: any) {
+    if (typeof grecaptcha !== 'undefined') {
+      grecaptcha.ready(() => {
+        grecaptcha
+          .execute(this.siteKey, {
+            action: 'submit',
+          })
+          .then((token: string) => {
+            console.log('token', token);
+            this.captchaToken = token;
+          });
+      });
+    } else {
+      console.error('reCaptcha script not loaded');
+    }
+  }
+
+  verifyToken() {
+    if (!this.captchaToken) {
+      alert('CAPTCHA not comleted');
+    }
+    this.reCaptchaService.postReCaptcha(this.captchaToken).subscribe({
+      next: (response: any) => {
+        console.log('Verification success:', response);
+      },
+      error: (error: any) => {
+        alert('Form submitted failed');
+      },
+    });
   }
 
   public onSubmit(event: Event) {
@@ -255,23 +295,24 @@ dropdownOpen = false;
     this.route.navigate(['/login'], { queryParams: { returnUrl } });
   }
   @ViewChild('searchInput') searchInputRef!: ElementRef;
-    selectCountry(country: any): void {
+  selectCountry(country: any): void {
     this.selectedCountry = country;
-    this.selectedCode = `${country.idd.root} ${country.idd.suffixes[0]}`
+    this.selectedCode = `${country.idd.root} ${country.idd.suffixes[0]}`;
     this.selectedCountryCode = country.cca2;
     this.normalForm.get('country')?.setValue(country.name.common);
     this.mmdSignalForm.get('country')?.setValue(country.name.common);
     this.dropdownOpen = false;
-  }  filterCountries(searchText: string) {
-      const term = searchText.toLowerCase();
-      this.filteredCountries = this.countryList.filter((country:any) =>
-        country.name.common.toLowerCase().includes(term)
-      );
+  }
+  filterCountries(searchText: string) {
+    const term = searchText.toLowerCase();
+    this.filteredCountries = this.countryList.filter((country: any) =>
+      country.name.common.toLowerCase().includes(term)
+    );
+  }
+  toggleDropdown() {
+    this.dropdownOpen = !this.dropdownOpen;
+    if (this.dropdownOpen) {
+      setTimeout(() => this.searchInputRef?.nativeElement?.focus(), 100);
     }
-      toggleDropdown() {
-      this.dropdownOpen = !this.dropdownOpen;
-      if (this.dropdownOpen) {
-        setTimeout(() => this.searchInputRef?.nativeElement?.focus(), 100);
-      }
-    }
+  }
 }
