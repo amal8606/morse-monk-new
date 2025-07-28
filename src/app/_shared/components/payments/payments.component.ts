@@ -1,8 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, Input } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { PaymentStatusComponent } from '../confirm-payment/confirm.compoent';
-import { ActivatedRoute } from '@angular/router';
-
+import { ActivatedRoute, Router } from '@angular/router';
 import {
   FormGroup,
   FormControl,
@@ -16,8 +15,9 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { SubscriptionService } from '../../../_core/http/api/subscription.service';
 import { UserService } from '../../../_core/http/api/user.service';
-import { RecaptchaModule } from "ng-recaptcha";
-import { ReCaptchaV3Service } from 'ng-recaptcha';
+import { RecaptchaModule, RecaptchaFormsModule } from 'ng-recaptcha-2';
+import { NgxCaptchaModule } from 'ngx-captcha';
+import { ReCaptchaService } from '../../../_core/http/api/reCaptcha.service';
 
 @Component({
   selector: 'app-payment',
@@ -32,7 +32,9 @@ import { ReCaptchaV3Service } from 'ng-recaptcha';
     MatFormFieldModule,
     MatInputModule,
     MatDatepickerModule,
-    RecaptchaModule
+    RecaptchaModule,
+    RecaptchaFormsModule,
+    NgxCaptchaModule,
   ],
 })
 export class PaymentComponent {
@@ -41,17 +43,18 @@ export class PaymentComponent {
   public paymentAmount: number = 0;
   constructor(
     private readonly route: ActivatedRoute,
+    private readonly routes: Router,
     private readonly subscriptionService: SubscriptionService,
-    private readonly userService: UserService
+    private readonly userService: UserService,
+    private readonly reCaptchaService: ReCaptchaService
   ) {}
-  public recapchaService =inject(ReCaptchaV3Service);
   public normalForm: FormGroup = new FormGroup({
     userId: new FormControl(''),
     status: new FormControl(''),
     duration: new FormControl(''),
     amount: new FormControl(''),
     paidDate: new FormControl('', Validators.required),
-    paymentMethod: new FormControl('', Validators.required),
+    paymentMethod: new FormControl('gpay', Validators.required),
   });
 
   duration: any;
@@ -79,6 +82,40 @@ export class PaymentComponent {
     });
   }
 
+  captchaToken: string = '';
+
+  siteKey: string = '6LcVd44rAAAAACGim4Lov0toCQXWllvM2y7K7VI9';
+  onCaptchaResolved(event: any) {
+    if (typeof grecaptcha !== 'undefined') {
+      grecaptcha.ready(() => {
+        grecaptcha
+          .execute(this.siteKey, {
+            action: 'submit',
+          })
+          .then((token: string) => {
+            console.log('token', token);
+            this.captchaToken = token;
+          });
+      });
+    } else {
+      console.error('reCaptcha script not loaded');
+    }
+  }
+
+  verifyToken() {
+    if (!this.captchaToken) {
+      alert('CAPTCHA not comleted');
+    }
+    this.reCaptchaService.postReCaptcha(this.captchaToken).subscribe({
+      next: (response: any) => {
+        console.log('Verification success:', response);
+      },
+      error: (error: any) => {
+        alert('Form submitted failed');
+      },
+    });
+  }
+
   submitPayment(): void {
     this.normalForm.get('userId')?.setValue(this.loggedUserId);
     this.normalForm.get('duration')?.setValue(this.duration);
@@ -88,25 +125,10 @@ export class PaymentComponent {
     this.subscriptionService.postSubscription(this.normalForm.value).subscribe({
       next: () => {
         this.isPaymentDone = true;
+        this.routes.navigate(['/']);
       },
       error: () => {},
       complete: () => {},
     });
   }
-  captchaPassed = false;
-
-onCaptchaResolved() {
-  //console.log(token)
-  //this.captchaPassed = !!token;
-   this.recapchaService.execute('myAction').subscribe(
-      (token) => {
-  this.captchaPassed = !this.captchaPassed;
-
-      },
-      (error) => {
-        console.log(`Recaptcha v3 error:`, error);
-      }
-    );
-}
-  
 }
