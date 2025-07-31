@@ -15,7 +15,6 @@ import { UserService } from '../../../../_core/http/api/user.service';
 import { SeoService } from '../../../../_core/services/seo.service';
 import { UserLoginService } from '../../../../_core/services/userLogin.service';
 
-
 @Component({
   selector: 'app-login',
   standalone: true,
@@ -24,14 +23,14 @@ import { UserLoginService } from '../../../../_core/services/userLogin.service';
   templateUrl: './login.component.html',
 })
 export class LoginComponent implements OnInit {
-   public returnUrl: any;
-   otpForm: FormGroup;
+  public returnUrl: any;
+  otpForm: FormGroup;
   message: string = '';
   isSubmitting = false;
   resendDisabled = true;
   countdown = 30;
   timer: any;
-  public fogetPassword:boolean=false;
+  public fogetPassword: boolean = false;
   constructor(
     private readonly seoService: SeoService,
     private readonly userService: UserService,
@@ -39,9 +38,10 @@ export class LoginComponent implements OnInit {
     private readonly userLoginService: UserLoginService,
     private route: ActivatedRoute,
     private readonly toastr: ToastrService,
-    private fb: FormBuilder, private http: HttpClient
+    private fb: FormBuilder,
+    private http: HttpClient
   ) {
-     this.otpForm = this.fb.group({
+    this.otpForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       otp: ['', [Validators.required, Validators.pattern(/^[0-9]{6}$/)]],
     });
@@ -52,18 +52,17 @@ export class LoginComponent implements OnInit {
     password: new FormControl('', Validators.required),
     deviceType: new FormControl(''), // will be set on init
   });
- 
+
   ngOnInit(): void {
     // Set SEO
-    this.returnUrl =
-      this.route?.snapshot?.queryParamMap.get('returnUrl') ??'';
-      this.seoService.updateMetaTags({
-        title: 'Morse Monk - Login',
-        description:
-          'Morse Monk is a platform that helps you learn Morse Code in a fun and interactive way.',
-        keywords:
-          'Morse, Online, Interactive, Classes, MMD signal exam, Ham radio exam, Morse visual signal, Reception',
-      });
+    this.returnUrl = this.route?.snapshot?.queryParamMap.get('returnUrl') ?? '';
+    this.seoService.updateMetaTags({
+      title: 'Morse Monk - Login',
+      description:
+        'Morse Monk is a platform that helps you learn Morse Code in a fun and interactive way.',
+      keywords:
+        'Morse, Online, Interactive, Classes, MMD signal exam, Ham radio exam, Morse visual signal, Reception',
+    });
 
     const deviceType = this.getDeviceType();
     this.normalForm.get('deviceType')?.setValue(deviceType);
@@ -81,25 +80,29 @@ export class LoginComponent implements OnInit {
     }
   }
 
+  isLogin: boolean = false;
   public login() {
+    this.isLogin = true;
     this.userService.login(this.normalForm.value).subscribe({
       next: (respo) => {
+        this.isLogin = false;
+
         this.toastr.success('Login successfully', 'Welcome Back!');
 
         this.userLoginService.setUserInfo(respo);
-        if(respo?.role === 'admin') {
-          console.log("admin",respo.role)
+        if (respo?.role === 'admin') {
+          console.log('admin', respo.role);
           this.router.navigate(['/admin']);
-        }
-        else if(this.returnUrl!=''){
+        } else if (this.returnUrl != '') {
           this.router.navigate([this.returnUrl]);
-        }
-        else {
+        } else {
           this.router.navigate(['/']);
         }
       },
       error: (err) => {
-        this.toastr.error("Invalid username or password")
+        this.isLogin = false;
+
+        this.toastr.error('Invalid username or password');
         console.error('Login failed:', err);
       },
     });
@@ -107,12 +110,12 @@ export class LoginComponent implements OnInit {
   onLoginSuccess() {
     this.router.navigateByUrl(this.returnUrl);
   }
-   sendOtp() {
+  sendOtp() {
     const email = this.otpForm.get('email')?.value;
     this.startResendTimer();
     this.http.post('/api/send-otp', { email }).subscribe({
-      next: () => this.message = 'OTP sent to your email.',
-      error: () => this.message = 'Failed to send OTP.'
+      next: () => (this.message = 'OTP sent to your email.'),
+      error: () => (this.message = 'Failed to send OTP.'),
     });
   }
 
@@ -130,10 +133,10 @@ export class LoginComponent implements OnInit {
       error: () => {
         this.message = 'Invalid or expired OTP.';
         this.isSubmitting = false;
-      }
+      },
     });
   }
-   startResendTimer() {
+  startResendTimer() {
     this.resendDisabled = true;
     this.countdown = 30;
 

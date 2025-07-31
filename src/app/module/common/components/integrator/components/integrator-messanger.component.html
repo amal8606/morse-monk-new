@@ -9,9 +9,9 @@
     <div class="flex flex-col items-center p-4 rounded space-y-4">
       <div class="flex flex-col items-center justify-center">
         <button
-         [ngClass]="{
-    'ring-4 ring-yellow-300 scale-105': flashActive
-  }"
+          [ngClass]="{
+            'ring-4 ring-yellow-300 scale-105': flashActive
+          }"
           [disabled]="audioUrl !== ''"
           (mousedown)="startTone()"
           (mouseup)="stopTone()"
@@ -61,29 +61,48 @@
         </button>
       </div>
 
-   <audio
-  #audioRef
-  *ngIf="audioUrl"
-  [src]="audioUrl"
-  controls
-  controlsList="nodownload"
-  class="w-full mt-2"
-  (play)="onAudioPlay()"
-  (pause)="onAudioPause()"
-  (ended)="onAudioPause()"
-></audio>
-
-
+      <audio
+        #audioRef
+        *ngIf="audioUrl"
+        [src]="audioUrl"
+        controls
+        controlsList="nodownload"
+        class="w-full mt-2"
+        (play)="onAudioPlay()"
+        (pause)="onAudioPause()"
+        (ended)="onAudioPause()"
+      ></audio>
 
       <div *ngIf="audioUrl" class="flex flex-wrap gap-2 w-full">
         <button
           (click)="showModal = !showModal"
+          *ngIf="!showDownload"
           class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 flex-1 min-w-[120px]"
         >
           ⬇️ Download
         </button>
+        <button
+          *ngIf="showDownload"
+          class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 flex-1 min-w-[120px]"
+        >
+          <svg class="animate-spin h-5 w-5 mr-2 inline" viewBox="0 0 24 24">
+            <circle
+              class="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              stroke-width="4"
+            ></circle>
+            <path
+              class="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 100 16v-4l-3 3 3 3v-4a8 8 0 01-8-8z"
+            />
+          </svg>
+        </button>
 
-         <button
+        <button
           (click)="sendMail()"
           class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 flex-1 min-w-[120px]"
         >
