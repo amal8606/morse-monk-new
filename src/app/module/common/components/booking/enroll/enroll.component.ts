@@ -32,6 +32,7 @@ import { NgxCaptchaModule } from 'ngx-captcha';
 import { RecaptchaFormsModule, RecaptchaModule } from 'ng-recaptcha-2';
 import { response } from 'express';
 import { ReCaptchaService } from '../../../../../_core/http/api/reCaptcha.service';
+import { ToastrService } from 'ngx-toastr';
 @Component({
   selector: 'app-enroll-for-class',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -64,7 +65,8 @@ export class EnrollClassComponent {
     private readonly countryService: CountryService,
     private readonly mmdCenterService: MmdCenterService,
     private readonly userLoginService: UserLoginService,
-    private readonly reCaptchaService: ReCaptchaService
+    private readonly reCaptchaService: ReCaptchaService,
+    private readonly toaster:ToastrService
   ) {}
   selectedDialCode: string = '+91';
   selectedSignalDialCode: string = '+91';
@@ -217,40 +219,41 @@ export class EnrollClassComponent {
 
   captchaToken: string = '';
 
-  siteKey: string = '6LcVd44rAAAAACGim4Lov0toCQXWllvM2y7K7VI9';
+  siteKey: string = '6LcL5pIrAAAAAHyCKhAnwX_TfShUpfXan-_FgfTl';
   onCaptchaResolved(event: any) {
-    if (typeof grecaptcha !== 'undefined') {
-      grecaptcha.ready(() => {
-        grecaptcha
-          .execute(this.siteKey, {
-            action: 'submit',
-          })
-          .then((token: string) => {
-            console.log('token', token);
-            this.captchaToken = token;
-          });
-      });
-    } else {
-      console.error('reCaptcha script not loaded');
+    console.log('Captcha resolved:', event);
+    if(event){
+      
+      // this.captchaToken = !this.captchaToken;
+      this.verifyToken(event);
     }
   }
+onCaptchaExpired() {
 
-  verifyToken() {
-    if (!this.captchaToken) {
-      alert('CAPTCHA not comleted');
-    }
-    this.reCaptchaService.postReCaptcha(this.captchaToken).subscribe({
-      next: (response: any) => {
-        console.log('Verification success:', response);
-      },
-      error: (error: any) => {
-        alert('Form submitted failed');
-      },
-    });
+  // this.captchaToken = !this.captchaToken;
+  console.log('Captcha expired');
+  
+}
+  verifyToken(token:any) {
+ console.log(token)
+this.captchaToken=token;
   }
 
   public onSubmit(event: Event) {
-    const amount = this.normalForm.value.country === 'India' ? 2500 : 40;
+  this.reCaptchaService.postReCaptcha(this.captchaToken).subscribe({
+      next: (response: any) => {
+        console.log('Verification success:', response);
+this.submitForm(event);
+      },
+      error: (error: any) => {
+         alert('Captcha required..');
+      
+      },
+    });
+   
+  }
+  private submitForm(event:any){
+     const amount = this.normalForm.value.country === 'India' ? 2500 : 40;
     if (this.selectedClassType === 'normal') {
       this.normalForm.patchValue({
         ...this.normalForm.value,

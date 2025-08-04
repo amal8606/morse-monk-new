@@ -84,36 +84,29 @@ export class PaymentComponent {
 
   captchaToken: string = '';
 
-  siteKey: string = '6LcVd44rAAAAACGim4Lov0toCQXWllvM2y7K7VI9';
+  siteKey: string = '6LcL5pIrAAAAAHyCKhAnwX_TfShUpfXan-_FgfTl';
   onCaptchaResolved(event: any) {
-    if (typeof grecaptcha !== 'undefined') {
-      grecaptcha.ready(() => {
-        grecaptcha
-          .execute(this.siteKey, {
-            action: 'submit',
-          })
-          .then((token: string) => {
-            console.log('token', token);
-            this.captchaToken = token;
-          });
-      });
-    } else {
-      console.error('reCaptcha script not loaded');
+    console.log('Captcha resolved:', event);
+    if(event){
+      
+      // this.captchaToken = !this.captchaToken;
+      this.verifyToken(event);
     }
   }
-
-  verifyToken() {
-    if (!this.captchaToken) {
-      alert('CAPTCHA not comleted');
-    }
-    this.reCaptchaService.postReCaptcha(this.captchaToken).subscribe({
+    verifyToken(token:any) {
+this.captchaToken=token;
+  }
+   public onSubmit() {
+  this.reCaptchaService.postReCaptcha(this.captchaToken).subscribe({
       next: (response: any) => {
-        console.log('Verification success:', response);
+this.submitPayment();
       },
       error: (error: any) => {
-        alert('Form submitted failed');
+         alert('Captcha required..');
+      
       },
     });
+   
   }
 
   submitPayment(): void {
@@ -125,7 +118,7 @@ export class PaymentComponent {
     this.subscriptionService.postSubscription(this.normalForm.value).subscribe({
       next: () => {
         this.isPaymentDone = true;
-        this.routes.navigate(['/']);
+        //this.routes.navigate(['/']);
       },
       error: () => {},
       complete: () => {},

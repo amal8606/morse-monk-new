@@ -49,7 +49,7 @@
             class="bg-white mt-2 p-3 rounded-lg text-center border border-yellow-800"
           >
             <img
-              src="/gpay_qr.jpeg"
+              src="/gpay_qr.jpg"
               alt="GPay QR Code"
               class="mx-auto w-full h-96 object-contain"
             />
@@ -93,10 +93,10 @@
     </div>
     <!-- Submit Button -->
     <div class="flex justify-center items-center mt-4">
-      <ngx-recaptcha2
-        [siteKey]="siteKey"
-        (success)="onCaptchaResolved(siteKey)"
-      ></ngx-recaptcha2>
+       <ngx-recaptcha2
+  [siteKey]="siteKey"
+  (success)="onCaptchaResolved($event)"
+></ngx-recaptcha2>
     </div>
 
     <!-- Submit Button -->
@@ -104,7 +104,7 @@
       type="button"
       [disabled]="!normalForm.valid"
       class="w-full sm:w-auto bg-[#5e4b2b] text-white font-heading py-2 px-6 rounded hover:bg-[#997950] transition"
-      (click)="submitPayment()"
+      (click)="onSubmit()"
     >
       Submit
     </button>
