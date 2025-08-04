@@ -1,5 +1,13 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, ElementRef, HostListener, inject, OnInit, ViewChild } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  HostListener,
+  inject,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -21,11 +29,11 @@ interface ToneSegment {
   imports: [CommonModule, ReactiveFormsModule, FormsModule],
   templateUrl: './integrator-messanger.component.html',
 })
-export class IntegratorMessangerComponent implements OnInit{
-  public integratorSevice =inject(SubscriptionService);
-  public router =inject(Router)
-  public userInfo = JSON.parse(sessionStorage.getItem('userInfo') || "");
-  flashActive:boolean=false;
+export class IntegratorMessangerComponent implements OnInit {
+  public integratorSevice = inject(SubscriptionService);
+  public router = inject(Router);
+  public userInfo = JSON.parse(sessionStorage.getItem('userInfo') || '');
+  flashActive: boolean = false;
   audioCtx: AudioContext | null = null;
   oscillator: OscillatorNode | null = null;
   recordingStartedAt: number = 0;
@@ -78,15 +86,15 @@ export class IntegratorMessangerComponent implements OnInit{
       this.stopTone();
     }
   }
-  ngOnInit(){
-    this.integratorSevice.isSubscriptionActive(this.userInfo?.userId).subscribe({
-next:()=>{
-
-},error:()=>{
-this.route.navigate(['/']);
-}
-    })
-
+  ngOnInit() {
+    this.integratorSevice
+      .isSubscriptionActive(this.userInfo?.userId)
+      .subscribe({
+        next: () => {},
+        error: () => {
+          this.route.navigate(['/']);
+        },
+      });
   }
   users = [
     {
@@ -213,8 +221,6 @@ this.route.navigate(['/']);
   //       a.click();
   //     }
   //   }
-
-
 
   startTone() {
     if (!this.audioCtx) {
@@ -353,13 +359,101 @@ this.route.navigate(['/']);
     return new Blob([view.buffer], { type: 'audio/wav' });
   }
 
-  downloadAudio() {
-    if (this.audioUrl) {
-      const a = document.createElement('a');
-      a.href = this.audioUrl;
-      const fileName = this.fileNameForm.get('fileName')?.value;
-      a.download = `${fileName}.wav`;
-      a.click();
+  showDownload: boolean = false;
+  async downloadAudio() {
+    this.showDownload = true;
+    if (!this.audioUrl) {
+      console.warn('No audio URL available to download.');
+      window.alert(
+        'No audio available to download. Please record a message first.'
+      );
+      return;
+    }
+
+    let tempAudioContext: AudioContext | null = null; // Declare a temporary AudioContext
+    try {
+      // 1. Fetch the existing WAV audio blob from the URL
+      const response = await fetch(this.audioUrl);
+      const wavBlob = await response.blob();
+
+      // 2. Decode the WAV blob into an AudioBuffer
+      // Create a new AudioContext for decoding
+      tempAudioContext = new AudioContext();
+      const arrayBuffer = await wavBlob.arrayBuffer();
+      const audioBuffer = await tempAudioContext.decodeAudioData(arrayBuffer);
+
+      // 3. Set up a graph in a real AudioContext to capture the stream
+      const source = tempAudioContext.createBufferSource();
+      source.buffer = audioBuffer;
+
+      // Create a MediaStreamDestinationNode from the real AudioContext
+      const destination = tempAudioContext.createMediaStreamDestination();
+      source.connect(destination);
+
+      // 4. Use MediaRecorder to encode the MediaStream to WebM (Opus)
+      const mediaRecorder = new MediaRecorder(destination.stream, {
+        mimeType: 'audio/webm;codecs=opus', // Specify WebM with Opus codec for compression
+      });
+
+      const compressedChunks: Blob[] = [];
+      mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          compressedChunks.push(event.data);
+        }
+      };
+
+      // Create a Promise to handle the asynchronous MediaRecorder process
+      const downloadPromise = new Promise<void>((resolve, reject) => {
+        mediaRecorder.onstop = () => {
+          const compressedBlob = new Blob(compressedChunks, {
+            type: 'audio/webm',
+          });
+          const downloadUrl = URL.createObjectURL(compressedBlob);
+
+          // Create a temporary anchor element to trigger the download
+          const a = document.createElement('a');
+          a.href = downloadUrl;
+          const fileName =
+            this.fileNameForm.get('fileName')?.value || 'morse_message';
+          a.download = `${fileName}.webm`; // Set filename with .webm extension
+          document.body.appendChild(a); // Append to body to ensure it's clickable
+          a.click();
+          document.body.removeChild(a); // Clean up the element
+          URL.revokeObjectURL(downloadUrl); // Release the object URL
+          resolve();
+        };
+        mediaRecorder.onerror = (event) => {
+          console.error('MediaRecorder error during compression:', event);
+          reject(event);
+        };
+      });
+
+      // Start the MediaRecorder and the audio source
+      mediaRecorder.start();
+      source.start();
+
+      // Stop MediaRecorder when the audio source finishes playing
+      source.onended = () => {
+        mediaRecorder.stop();
+        // The tempAudioContext will be closed in the finally block
+      };
+
+      // Ensure the audio context is resumed if it's suspended (common in browsers)
+      if (tempAudioContext.state === 'suspended') {
+        await tempAudioContext.resume();
+      }
+
+      // Wait for the download to complete
+      await downloadPromise;
+    } catch (error) {
+      console.error('Error during audio compression and download:', error);
+      window.alert('Failed to compress and download audio. Please try again.');
+    } finally {
+      // Ensure the temporary AudioContext is closed to release resources
+      if (tempAudioContext) {
+        tempAudioContext.close();
+      }
+      this.showDownload = false;
     }
   }
   public newMessage() {
@@ -371,44 +465,44 @@ this.route.navigate(['/']);
     }
   }
   //flash button
- @ViewChild('audioRef') audioRef!: ElementRef<HTMLAudioElement>;
-private flashTimeouts: any[] = [];
+  @ViewChild('audioRef') audioRef!: ElementRef<HTMLAudioElement>;
+  private flashTimeouts: any[] = [];
 
-onAudioPlay() {
-  if (!this.audioRef || !this.toneSegments.length) return;
+  onAudioPlay() {
+    if (!this.audioRef || !this.toneSegments.length) return;
 
-  const audio = this.audioRef.nativeElement;
-  const audioStart = performance.now();
-  this.clearFlashTimeouts();
+    const audio = this.audioRef.nativeElement;
+    const audioStart = performance.now();
+    this.clearFlashTimeouts();
 
-  this.toneSegments.forEach(segment => {
-    const segmentStart = segment.start * 1000;
-    const segmentEnd = segmentStart + segment.duration * 1000;
+    this.toneSegments.forEach((segment) => {
+      const segmentStart = segment.start * 1000;
+      const segmentEnd = segmentStart + segment.duration * 1000;
 
-    const flashOn = setTimeout(() => {
-      this.flashActive = true;
-      this.cdr.detectChanges();
-    }, segmentStart);
+      const flashOn = setTimeout(() => {
+        this.flashActive = true;
+        this.cdr.detectChanges();
+      }, segmentStart);
 
-    const flashOff = setTimeout(() => {
-      this.flashActive = false;
-      this.cdr.detectChanges();
-    }, segmentEnd);
+      const flashOff = setTimeout(() => {
+        this.flashActive = false;
+        this.cdr.detectChanges();
+      }, segmentEnd);
 
-    this.flashTimeouts.push(flashOn, flashOff);
-  });
-}
+      this.flashTimeouts.push(flashOn, flashOff);
+    });
+  }
 
-onAudioPause() {
-  this.flashActive = false;
-  this.clearFlashTimeouts();
-  this.cdr.detectChanges();
-}
+  onAudioPause() {
+    this.flashActive = false;
+    this.clearFlashTimeouts();
+    this.cdr.detectChanges();
+  }
 
-clearFlashTimeouts() {
-  this.flashTimeouts.forEach(timeout => clearTimeout(timeout));
-  this.flashTimeouts = [];
-}
+  clearFlashTimeouts() {
+    this.flashTimeouts.forEach((timeout) => clearTimeout(timeout));
+    this.flashTimeouts = [];
+  }
   sendMail() {
     if (!this.audioUrl) {
       alert(
@@ -439,7 +533,7 @@ clearFlashTimeouts() {
     const fileName = `morse_message_${userSuffix}.wav`;
 
     const message = encodeURIComponent(
-      `Hi! I've recorded a Morse code message. Please see the attached audio file: ${fileName}.wav`
+      `Hi! I've recorded a Morse code message. Please see the attached audio file`
     );
 
     // Open WhatsApp Web without a phone number – user will choose contact manually
