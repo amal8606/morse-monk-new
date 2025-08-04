@@ -32,7 +32,7 @@ interface ToneSegment {
 export class IntegratorMessangerComponent implements OnInit {
   public integratorSevice = inject(SubscriptionService);
   public router = inject(Router);
-  public userInfo = JSON.parse(sessionStorage.getItem('userInfo') || '');
+  public userInfo = JSON.parse(sessionStorage.getItem('userInfo') || '{}');
   flashActive: boolean = false;
   audioCtx: AudioContext | null = null;
   oscillator: OscillatorNode | null = null;
