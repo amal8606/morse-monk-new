@@ -78,8 +78,6 @@ this.countryService.getCountries().subscribe((data: any[]) => {
   }
   onRegister() {
     this.isLoading = true;
-    let {phone} =this.normalForm.value;
-    this.normalForm.get('phone')?.setValue(`${this.selectedCode}${phone}`);
     this.normalForm.get('bookingDate')?.setValue(new Date());
     this.normalForm.get('bookingDate')?.setValue(new Date());
     this.normalForm.get('status')?.setValue('pending');

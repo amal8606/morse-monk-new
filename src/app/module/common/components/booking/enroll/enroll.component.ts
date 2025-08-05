@@ -72,8 +72,6 @@ export class EnrollClassComponent {
     private readonly reCaptchaService: ReCaptchaService,
     private readonly toaster:ToastrService
   ) {}
-  selectedDialCode: string = '+91';
-  selectedSignalDialCode: string = '+91';
   selectedDates: Date[] = [];
   selectedClassType: string = 'normal';
   dateSelectionControl = new FormControl('');
@@ -134,7 +132,6 @@ public isBrowser: boolean = false;
         this.selectedCountry = this.countryList?.find((country: any) => {
           return country.name?.common === this.userInfo.country;
         });
-        console.log(this.selectedCountry);
         this.filteredCountries = [...this.countryList];
       });
       this.mmdCenterService.getMmdCenter().subscribe({
@@ -226,7 +223,6 @@ public isBrowser: boolean = false;
 
   siteKey: string = '6LeaK5srAAAAAI4faW-JVN725LmwbYVPN7loFwUr';
   onCaptchaResolved(event: any) {
-    console.log('Captcha resolved:', event);
     if(event){
       
       // this.captchaToken = !this.captchaToken;
@@ -236,18 +232,15 @@ public isBrowser: boolean = false;
 onCaptchaExpired() {
 
   // this.captchaToken = !this.captchaToken;
-  console.log('Captcha expired');
   
 }
   verifyToken(token:any) {
- console.log(token)
 this.captchaToken=token;
   }
 
   public onSubmit(event: Event) {
   this.reCaptchaService.postReCaptcha(this.captchaToken).subscribe({
       next: (response: any) => {
-        console.log('Verification success:', response);
 this.submitForm(event);
       },
       error: (error: any) => {
@@ -305,7 +298,6 @@ this.submitForm(event);
   @ViewChild('searchInput') searchInputRef!: ElementRef;
   selectCountry(country: any): void {
     this.selectedCountry = country;
-    this.selectedCode = `${country.idd.root} ${country.idd.suffixes[0]}`;
     this.selectedCountryCode = country.cca2;
     this.normalForm.get('country')?.setValue(country.name.common);
     this.mmdSignalForm.get('country')?.setValue(country.name.common);
