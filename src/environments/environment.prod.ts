@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-   api: 'https://morsemonk.com/api',
+   api: 'https://api.morsemonk.com/api',
 };

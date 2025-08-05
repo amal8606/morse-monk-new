@@ -1,8 +1,11 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
+  Inject,
+  inject,
+  PLATFORM_ID,
   ViewChild,
 } from '@angular/core';
 import {
@@ -59,6 +62,7 @@ import { ToastrService } from 'ngx-toastr';
 })
 export class EnrollClassComponent {
   constructor(
+    @Inject(PLATFORM_ID) private platformId: Object,
     private readonly seoService: SeoService,
     private readonly route: Router,
     private readonly bookingService: BookingService,
@@ -116,56 +120,57 @@ export class EnrollClassComponent {
     paidDate: new FormControl(''),
     paymentMethod: new FormControl(''),
   });
-
+public isBrowser: boolean = false;
   public country: any;
   public userInfo: any;
   ngOnInit(): void {
-    this.countryService.getCountries().subscribe((data: any[]) => {
-      this.countryList = (data || []).sort((a, b) => {
-        const nameA = a.name?.common || '';
-        const nameB = b.name?.common || '';
-        return nameA.localeCompare(nameB);
+      this.isBrowser = isPlatformBrowser(this.platformId);
+      this.countryService.getCountries().subscribe((data: any[]) => {
+        this.countryList = (data || []).sort((a, b) => {
+          const nameA = a.name?.common || '';
+          const nameB = b.name?.common || '';
+          return nameA.localeCompare(nameB);
+        });
+        this.selectedCountry = this.countryList?.find((country: any) => {
+          return country.name?.common === this.userInfo.country;
+        });
+        console.log(this.selectedCountry);
+        this.filteredCountries = [...this.countryList];
       });
-      this.selectedCountry = this.countryList?.find((country: any) => {
-        return country.name?.common === this.userInfo.country;
+      this.mmdCenterService.getMmdCenter().subscribe({
+        next: (respo) => {
+          this.mmdCentres = respo;
+        },
+        error: () => {},
       });
-      console.log(this.selectedCountry);
-      this.filteredCountries = [...this.countryList];
-    });
-    this.mmdCenterService.getMmdCenter().subscribe({
-      next: (respo) => {
-        this.mmdCentres = respo;
-      },
-      error: () => {},
-    });
-    this.userLoginService.userInfo$.subscribe((user) => {
-      this.userInfo = user;
-    });
-    this.normalForm.patchValue({
-      name: this.userInfo.userName,
-      email: this.userInfo.userEmail,
-      phone: this.userInfo.phone,
-      country: this.userInfo.country,
-      userId: this.userInfo.userId,
-    });
-
-    this.mmdSignalForm.patchValue({
-      name: this.userInfo.userName,
-      email: this.userInfo.userEmail,
-      phone: this.userInfo.phone,
-      country: this.userInfo.country,
-      userId: this.userInfo.userId,
-    });
-    this.mmdSignalForm.get('userId')?.setValue(this.userInfo.userId);
-
-    this.seoService.updateMetaTags({
-      title: 'Morse Monk - Enroll for class',
-      description:
-        'Morse Monk is a platform that helps you learn Morse Code in a fun and interactive way. Whether you are a beginner or an advanced learner, Morse Monk has got you covered.',
-      keywords:
-        'Morse, Online, Interactive, Classes, Lesson, MMD signal exam, Ham radio exam, Morse visual signal, Reception, Tool for sending morse message',
-    });
-  }
+      this.userLoginService.userInfo$.subscribe((user) => {
+        this.userInfo = user;
+      });
+      this.normalForm.patchValue({
+        name: this.userInfo.userName,
+        email: this.userInfo.userEmail,
+        phone: this.userInfo.phone,
+        country: this.userInfo.country,
+        userId: this.userInfo.userId,
+      });
+  
+      this.mmdSignalForm.patchValue({
+        name: this.userInfo.userName,
+        email: this.userInfo.userEmail,
+        phone: this.userInfo.phone,
+        country: this.userInfo.country,
+        userId: this.userInfo.userId,
+      });
+      this.mmdSignalForm.get('userId')?.setValue(this.userInfo.userId);
+  
+      this.seoService.updateMetaTags({
+        title: 'Morse Monk - Enroll for class',
+        description:
+          'Morse Monk is a platform that helps you learn Morse Code in a fun and interactive way. Whether you are a beginner or an advanced learner, Morse Monk has got you covered.',
+        keywords:
+          'Morse, Online, Interactive, Classes, Lesson, MMD signal exam, Ham radio exam, Morse visual signal, Reception, Tool for sending morse message',
+      });
+    }
 
   get currentForm(): FormGroup {
     return this.selectedClassType === 'normal'
@@ -219,7 +224,7 @@ export class EnrollClassComponent {
 
   captchaToken: string = '';
 
-  siteKey: string = '6LcL5pIrAAAAAHyCKhAnwX_TfShUpfXan-_FgfTl';
+  siteKey: string = '6LeaK5srAAAAAI4faW-JVN725LmwbYVPN7loFwUr';
   onCaptchaResolved(event: any) {
     console.log('Captcha resolved:', event);
     if(event){

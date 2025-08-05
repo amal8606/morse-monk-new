@@ -1,5 +1,5 @@
-import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { Component, Inject, Input, PLATFORM_ID } from '@angular/core';
 import { PaymentStatusComponent } from '../confirm-payment/confirm.compoent';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
@@ -46,8 +46,11 @@ export class PaymentComponent {
     private readonly routes: Router,
     private readonly subscriptionService: SubscriptionService,
     private readonly userService: UserService,
-    private readonly reCaptchaService: ReCaptchaService
-  ) {}
+    private readonly reCaptchaService: ReCaptchaService,
+     @Inject(PLATFORM_ID) private platformId: Object
+  ) {
+    
+  }
   public normalForm: FormGroup = new FormGroup({
     userId: new FormControl(''),
     status: new FormControl(''),
@@ -60,7 +63,10 @@ export class PaymentComponent {
   duration: any;
   public loggedUserId: any;
   loggedUser: any;
+  isBrowser: boolean = false;
   ngOnInit(): void {
+      if (isPlatformBrowser(this.platformId)) {
+    this.isBrowser = true;
     const userInfo = JSON.parse(sessionStorage.getItem('userInfo') || '{}');
     this.loggedUserId = userInfo.userId;
     this.route.queryParams.subscribe((params) => {
@@ -81,10 +87,11 @@ export class PaymentComponent {
       },
     });
   }
+  }
 
   captchaToken: string = '';
 
-  siteKey: string = '6LcL5pIrAAAAAHyCKhAnwX_TfShUpfXan-_FgfTl';
+  siteKey: string = '6LeaK5srAAAAAI4faW-JVN725LmwbYVPN7loFwUr';
   onCaptchaResolved(event: any) {
     console.log('Captcha resolved:', event);
     if(event){

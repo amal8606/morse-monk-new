@@ -94,6 +94,7 @@
     <!-- Submit Button -->
     <div class="flex justify-center items-center mt-4">
        <ngx-recaptcha2
+       *ngIf="isBrowser"
   [siteKey]="siteKey"
   (success)="onCaptchaResolved($event)"
 ></ngx-recaptcha2>
