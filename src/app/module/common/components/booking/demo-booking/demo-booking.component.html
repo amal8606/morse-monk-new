@@ -8,7 +8,9 @@
       id="registerForm"
       class="bg-[#fffefb] p-6 md:p-8 rounded-lg shadow-xl border border-[#d6c9ae]"
     >
-      <h1 class="text-2xl md:text-3xl font-heading text-[#3e3020] mb-6 text-center">
+      <h1
+        class="text-2xl md:text-3xl font-heading text-[#3e3020] mb-6 text-center"
+      >
         Book a Free Demo Class
       </h1>
 
@@ -48,7 +50,9 @@
 
           <!-- Country Dropdown -->
           <div class="relative">
-            <label class="block text-[#3e3020] font-semibold mb-1">Country</label>
+            <label class="block text-[#3e3020] font-semibold mb-1"
+              >Country</label
+            >
             <div
               class="h-10 px-3 border border-[#bca87c] bg-[#fefcf5] text-[#3e3020] rounded flex items-center justify-between cursor-pointer"
               (click)="toggleDropdown()"
@@ -58,13 +62,25 @@
               <div class="flex items-center gap-2">
                 <img
                   *ngIf="selectedCountry"
-                  [src]="'/svg-country-flags/svg/' + selectedCountry.cca2.toLowerCase() + '.svg'"
+                  [src]="
+                    '/svg-country-flags/svg/' +
+                    selectedCountry.cca2.toLowerCase() +
+                    '.svg'
+                  "
                   alt="{{ selectedCountry.name.common }} flag"
                   class="w-5 h-4 rounded-sm"
                 />
-                <span>{{ selectedCountry?.name.common || 'Select a Country' }}</span>
+                <span>{{
+                  selectedCountry?.name.common || "Select a Country"
+                }}</span>
               </div>
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <svg
+                class="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+              >
                 <path d="M19 9l-7 7-7-7" />
               </svg>
             </div>
@@ -89,7 +105,11 @@
                   class="flex items-center gap-2 px-3 py-2 hover:bg-[#fefcf5] cursor-pointer text-[#3e3020]"
                 >
                   <img
-                    [src]="'/svg-country-flags/svg/' + country.cca2.toLowerCase() + '.svg'"
+                    [src]="
+                      '/svg-country-flags/svg/' +
+                      country.cca2.toLowerCase() +
+                      '.svg'
+                    "
                     alt="{{ country.name.common }} flag"
                     class="w-5 h-4 rounded-sm"
                   />
@@ -115,11 +135,14 @@
           </div>
         </div>
 
-        <p class="mt-4 text-sm italic text-gray-600">* Available dates will be informed by email.</p>
-  
+        <p class="mt-4 text-sm italic text-gray-600">
+          * Available dates will be informed by email.
+        </p>
+
         <!-- Submit Button -->
         <div class="mt-6">
           <button
+            *ngIf="!isLoading"
             type="submit"
             [disabled]="normalForm.invalid"
             class="w-full py-2 px-4 bg-[#5e4b2b] text-white font-heading text-lg rounded hover:bg-[#8b774f] transition disabled:cursor-not-allowed"
@@ -165,7 +188,11 @@
     <div
       class="bg-white shadow-xl rounded-2xl p-8 max-w-md w-full text-center border border-green-900"
     >
-      <img src="/success.gif" alt="Success animation" class="mx-auto w-24 h-24" />
+      <img
+        src="/success.gif"
+        alt="Success animation"
+        class="mx-auto w-24 h-24"
+      />
       <h2 class="text-2xl font-heading text-[#3e3020] mb-2">
         Demo Class Booked Successfully!
       </h2>

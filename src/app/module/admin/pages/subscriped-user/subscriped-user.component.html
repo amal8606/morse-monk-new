@@ -106,6 +106,7 @@
                 </th>
 
                 <th
+                  *ngIf="selectedType !== 'pending'"
                   scope="col"
                   class="px-6 py-3 text-end text-xs font-medium text-gray-500 uppercase"
                 >
@@ -124,41 +125,43 @@
                 <td
                   class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800"
                 >
-                  {{ user.userName }}
+                  {{ user.userName | fallback : "N/A" }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                  {{ user.userEmail }}
+                  {{ user.userEmail | fallback : "N/A" }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                  {{ user.phone }}
+                  {{ user.phone | fallback : "N/A" }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                  {{ user.country }}
+                  {{ user.country | fallback : "N/A" }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                  {{ user.startDate | date : "dd/MM/yyyy" }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                  {{ user.endDate | date : "dd/MM/yyyy" }}
+                  {{ user.startDate | date : "dd/MM/yyyy" | fallback : "N/A" }}
                 </td>
 
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                  {{ user.createdAt | date : "dd/MM/yyyy" }}
+                  {{ user.endDate | date : "dd/MM/yyyy" | fallback : "N/A" }}
+                </td>
+
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
+                  {{ user.createdAt | date : "dd/MM/yyyy" | fallback : "N/A" }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                  {{ user.duration }}
+                  {{ user.duration | fallback : "N/A" }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                  {{ user.amount | currency : "USD" }}
+                  {{ user.amount | currency : "USD" | fallback : "N/A" }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                  {{ user.createdAt | date : "dd/MM/yyyy" }}
+                  {{ user.createdAt | date : "dd/MM/yyyy" | fallback : "N/A" }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                  {{ user.paymentMethod }}
+                  {{ user.paymentMethod | fallback : "N/A" }}
                 </td>
 
                 <td
+                  *ngIf="selectedType !== 'pending'"
                   class="px-6 py-4 whitespace-nowrap text-end text-sm font-medium"
                 >
                   <button

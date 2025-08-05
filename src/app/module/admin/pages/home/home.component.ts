@@ -7,6 +7,7 @@ import { ChangeDetectorRef, Component } from '@angular/core';
 import { BookingService } from '../../../../_core/http/api/booking.service';
 import { EditHomeComponent } from './component/edit-home/edit-home.component';
 import { ToastrComponentlessModule, ToastrService } from 'ngx-toastr';
+import { FallbackPipe } from '../../../../_shared/pipes/fallback.pipe';
 
 @Component({
   selector: 'app-home',
@@ -18,6 +19,7 @@ import { ToastrComponentlessModule, ToastrService } from 'ngx-toastr';
     MatSelectModule,
     MatButtonModule,
     EditHomeComponent,
+    FallbackPipe,
   ],
   templateUrl: './home.component.html',
 })
@@ -35,8 +37,9 @@ export class AdminHomeComponent {
   public showConfirm: boolean = false;
   public isloadingStatus: boolean = false;
 
-  constructor(private readonly booikngService: BookingService,
-    private toaster:ToastrService
+  constructor(
+    private readonly booikngService: BookingService,
+    private toaster: ToastrService
   ) {}
 
   ngOnInit() {
@@ -163,10 +166,10 @@ export class AdminHomeComponent {
     this.booikngService.updateBookingStatus(user).subscribe({
       next: () => {
         this.bookingFunction(this.selectedTypeStatus);
-        this.toaster.success("success..")
+        this.toaster.success('success..');
       },
       error: () => {
-        this.toaster.error("error,please try again")
+        this.toaster.error('error,please try again');
       },
     });
   }
@@ -184,7 +187,7 @@ export class AdminHomeComponent {
     this.user = user;
     switch (action) {
       case 'pending':
-    this.showConfirm = true;
+        this.showConfirm = true;
         return (this.action = 'Confirmed');
       case 'confirmed':
         return (this.action = 'Pending');

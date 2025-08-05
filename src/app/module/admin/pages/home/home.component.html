@@ -1,5 +1,5 @@
 <section class="m-2">
-  <div class="flex gap-5">
+  <div class="flex gap-5 overflow-x-hidden overflow-y-hidden">
     <div class="mb-4">
       <mat-form-field>
         <mat-label>Select Payment Type</mat-label>
@@ -17,7 +17,7 @@
         </mat-select>
       </mat-form-field>
     </div>
-    <div class="mb-4">
+    <div class="mb-4 w-52">
       <mat-form-field>
         <mat-label>Select Payment Status</mat-label>
         <mat-select
@@ -50,16 +50,16 @@
           <!-- Custom rendering -->
           <ng-container [ngSwitch]="column">
             <ng-container *ngSwitchCase="'bookingDate'">
-              {{ user.bookingDate | date : "dd/MM/yyyy" }}
+              {{ user.bookingDate | date : "dd/MM/yyyy" | fallback : "N/A" }}
             </ng-container>
             <ng-container *ngSwitchCase="'examDate'">
-              {{ user.examDate | date : "dd/MM/yyyy" }}
+              {{ user.examDate | date : "dd/MM/yyyy" | fallback : "N/A" }}
             </ng-container>
             <ng-container *ngSwitchCase="'amount'">
-              {{ user.amount | currency : "USD" }}
+              {{ user.amount | currency : "USD" | fallback : "N/A" }}
             </ng-container>
             <ng-container *ngSwitchCase="'paidDate'">
-              {{ user.paidDate | date : "dd/MM/yyyy" }}
+              {{ user.paidDate | date : "dd/MM/yyyy" | fallback : "N/A" }}
             </ng-container>
 
             <ng-container *ngSwitchCase="'status'">
@@ -82,7 +82,7 @@
               </div>
             </ng-container>
             <ng-container *ngSwitchDefault>
-              {{ user[column] }}
+              {{ user[column] | fallback : "N/A" }}
             </ng-container>
           </ng-container>
         </td>

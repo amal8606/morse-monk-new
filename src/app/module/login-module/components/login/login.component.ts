@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import {
   FormBuilder,
   FormControl,
@@ -80,6 +80,10 @@ export class LoginComponent implements OnInit {
     }
   }
 
+  showPassword: boolean = false;
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
+  }
   isLogin: boolean = false;
   public login() {
     this.isLogin = true;
@@ -106,6 +110,13 @@ export class LoginComponent implements OnInit {
         console.error('Login failed:', err);
       },
     });
+  }
+
+  @HostListener('window:keydown', ['$event'])
+  handleKeyDown(event: KeyboardEvent) {
+    if (event.key === 'Enter' && this.normalForm.valid && !this.isLogin) {
+      this.login();
+    }
   }
   onLoginSuccess() {
     this.router.navigateByUrl(this.returnUrl);

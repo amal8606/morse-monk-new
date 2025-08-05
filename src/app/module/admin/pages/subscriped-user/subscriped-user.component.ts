@@ -8,6 +8,7 @@ import { MatTableModule } from '@angular/material/table';
 import { SubscriptionService } from '../../../../_core/http/api/subscription.service';
 import { FormsModule } from '@angular/forms';
 import { EditSubscripedUserComponent } from './component/edit-subscriped-user/edit-subscriped-user.component';
+import { FallbackPipe } from '../../../../_shared/pipes/fallback.pipe';
 
 @Component({
   selector: 'app-subscriped-user',
@@ -20,6 +21,7 @@ import { EditSubscripedUserComponent } from './component/edit-subscriped-user/ed
     MatButtonModule,
     FormsModule,
     EditSubscripedUserComponent,
+    FallbackPipe,
   ],
   templateUrl: './subscriped-user.component.html',
 })

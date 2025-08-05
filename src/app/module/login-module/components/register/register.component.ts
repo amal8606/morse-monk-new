@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, ViewChild } from '@angular/core';
 import {
   FormGroup,
   FormControl,
@@ -60,13 +60,11 @@ export class RegisterComponent {
     this.registrationForm = this.formBuilder.group(
       {
         fullName: new FormControl('', Validators.required),
-        email: new FormControl('', [
+        email: new FormControl('', [Validators.required, Validators.email]),
+        phoneNumber: new FormControl('', [
           Validators.required,
-          Validators.email,
+          Validators.maxLength(10),
         ]),
-        phoneNumber: new FormControl('', [Validators.required,
-          Validators.maxLength(10)]
-        ),
         country: new FormControl('', Validators.required),
         passwordHash: new FormControl('', [
           Validators.required,
@@ -92,7 +90,11 @@ export class RegisterComponent {
     const passwordHash = control.get('passwordHash');
     const confirmPassword = control.get('confirmPassword');
 
-    if (passwordHash && confirmPassword && passwordHash.value !== confirmPassword.value) {
+    if (
+      passwordHash &&
+      confirmPassword &&
+      passwordHash.value !== confirmPassword.value
+    ) {
       return { passwordMismatch: true };
     }
 
@@ -109,7 +111,9 @@ export class RegisterComponent {
 
   selectCountry(country: any): void {
     this.selectedCountry = country;
-    this.selectedCode = `${country.idd?.root || ''}${country.idd?.suffixes?.[0] || ''}`;
+    this.selectedCode = `${country.idd?.root || ''}${
+      country.idd?.suffixes?.[0] || ''
+    }`;
     this.selectedCountryCode = country.cca2;
     this.dropdownOpen = false;
     this.registrationForm.get('country')?.setValue(country.name?.common || '');
@@ -135,7 +139,9 @@ export class RegisterComponent {
       return;
     }
 
-    const phoneNumber = `${this.selectedCode}${this.registrationForm.get('phoneNumber')?.value}`;
+    const phoneNumber = `${this.selectedCode}${
+      this.registrationForm.get('phoneNumber')?.value
+    }`;
     this.registrationForm.get('phoneNumber')?.setValue(phoneNumber);
 
     this.formData = {
@@ -158,6 +164,16 @@ export class RegisterComponent {
         this.isLoading = false;
       },
     });
+  }
+  @HostListener('window:keydown', ['$event'])
+  handleRegisterKeyDown(event: KeyboardEvent) {
+    if (
+      event.key === 'Enter' &&
+      this.registrationForm.valid &&
+      !this.isLoading
+    ) {
+      this.onSubmit();
+    }
   }
 
   get email() {

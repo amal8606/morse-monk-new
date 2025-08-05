@@ -61,25 +61,27 @@
                 <td
                   class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800"
                 >
-                  {{ user.fullName }}
+                  {{ user.fullName | fallback : "N/A" }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                  {{ user.email }}
+                  {{ user.email | fallback : "N/A" }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                  {{ user.phoneNumber }}
+                  {{ user.phoneNumber | fallback : "N/A" }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                  {{ user.country }}
+                  {{ user.country | fallback : "N/A" }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
                   {{ user.createdAt | date : "dd/MM/yyyy" }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                  {{ user.dateOfBirth | date : "dd/MM/yyyy" }}
+                  {{
+                    user.dateOfBirth | date : "dd/MM/yyyy" | fallback : "N/A"
+                  }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                  {{ user.userRole }}
+                  {{ user.userRole | fallback : "N/A" }}
                 </td>
 
                 <td
