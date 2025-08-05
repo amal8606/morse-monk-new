@@ -16,7 +16,7 @@ export class EmailService {
     return this.http.post<any>(`${environment.api}/Email`, email);
   }
   public getEnquiryEmail() {
-    return this.http.get<any>(`${environment.api}/Email`);
+    return this.http.get<any>(`${environment.api}/Email/enquiry`);
   }
   public deleteEnquiryEmail(id: any) {
     return this.http.delete<any>(`${environment.api}/Email?id=${id}`);
