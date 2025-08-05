@@ -49,6 +49,7 @@ export class IntegratorMessangerComponent implements OnInit {
   mediaRecorder: any;
   audioChunks: Blob[] = [];
   private navSub!: Subscription;
+  private platformId = inject(PLATFORM_ID);
   constructor(private route: Router, private cdr: ChangeDetectorRef) {
     this.navSub = this.route.events.subscribe((event) => {
       if (event instanceof NavigationStart) {

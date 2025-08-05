@@ -1,5 +1,6 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import { isPlatformBrowser } from '@angular/common';
 
 @Injectable({
   providedIn: 'root',
@@ -7,9 +8,12 @@ import { BehaviorSubject } from 'rxjs';
 export class UserLoginService {
   private userInfoSubject = new BehaviorSubject<any>({});
   public userInfo$ = this.userInfoSubject.asObservable();
+  private isBrowser: boolean;
 
-  constructor() {
-    if (typeof window !== 'undefined') {
+  constructor(@Inject(PLATFORM_ID) private platformId: Object) {
+    this.isBrowser = isPlatformBrowser(platformId);
+
+    if (this.isBrowser) {
       const storedUser = sessionStorage.getItem('userInfo');
       if (storedUser) {
         this.userInfoSubject.next(JSON.parse(storedUser));
@@ -18,9 +22,9 @@ export class UserLoginService {
   }
 
   setUserInfo(user: any): void {
-    if (typeof window !== 'undefined') {
+    if (this.isBrowser) {
       sessionStorage.setItem('userInfo', JSON.stringify(user));
-        sessionStorage.setItem('JWT', JSON.stringify(user.token));
+      sessionStorage.setItem('JWT', JSON.stringify(user.token));
     }
     this.userInfoSubject.next(user);
   }
@@ -30,10 +34,9 @@ export class UserLoginService {
   }
 
   clearUserInfo(): void {
-    if (typeof window !== 'undefined') {
+    if (this.isBrowser) {
       sessionStorage.removeItem('userInfo');
       sessionStorage.removeItem('JWT');
-
     }
     this.userInfoSubject.next({});
   }

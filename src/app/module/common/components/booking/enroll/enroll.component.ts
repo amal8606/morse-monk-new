@@ -1,8 +1,11 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
+  Inject,
+  inject,
+  PLATFORM_ID,
   ViewChild,
 } from '@angular/core';
 import {
@@ -32,6 +35,7 @@ import { NgxCaptchaModule } from 'ngx-captcha';
 import { RecaptchaFormsModule, RecaptchaModule } from 'ng-recaptcha-2';
 import { response } from 'express';
 import { ReCaptchaService } from '../../../../../_core/http/api/reCaptcha.service';
+import { ToastrService } from 'ngx-toastr';
 @Component({
   selector: 'app-enroll-for-class',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -58,13 +62,15 @@ import { ReCaptchaService } from '../../../../../_core/http/api/reCaptcha.servic
 })
 export class EnrollClassComponent {
   constructor(
+    @Inject(PLATFORM_ID) private platformId: Object,
     private readonly seoService: SeoService,
     private readonly route: Router,
     private readonly bookingService: BookingService,
     private readonly countryService: CountryService,
     private readonly mmdCenterService: MmdCenterService,
     private readonly userLoginService: UserLoginService,
-    private readonly reCaptchaService: ReCaptchaService
+    private readonly reCaptchaService: ReCaptchaService,
+    private readonly toaster:ToastrService
   ) {}
   selectedDialCode: string = '+91';
   selectedSignalDialCode: string = '+91';
@@ -114,56 +120,57 @@ export class EnrollClassComponent {
     paidDate: new FormControl(''),
     paymentMethod: new FormControl(''),
   });
-
+public isBrowser: boolean = false;
   public country: any;
   public userInfo: any;
   ngOnInit(): void {
-    this.countryService.getCountries().subscribe((data: any[]) => {
-      this.countryList = (data || []).sort((a, b) => {
-        const nameA = a.name?.common || '';
-        const nameB = b.name?.common || '';
-        return nameA.localeCompare(nameB);
+      this.isBrowser = isPlatformBrowser(this.platformId);
+      this.countryService.getCountries().subscribe((data: any[]) => {
+        this.countryList = (data || []).sort((a, b) => {
+          const nameA = a.name?.common || '';
+          const nameB = b.name?.common || '';
+          return nameA.localeCompare(nameB);
+        });
+        this.selectedCountry = this.countryList?.find((country: any) => {
+          return country.name?.common === this.userInfo.country;
+        });
+        console.log(this.selectedCountry);
+        this.filteredCountries = [...this.countryList];
       });
-      this.selectedCountry = this.countryList?.find((country: any) => {
-        return country.name?.common === this.userInfo.country;
+      this.mmdCenterService.getMmdCenter().subscribe({
+        next: (respo) => {
+          this.mmdCentres = respo;
+        },
+        error: () => {},
       });
-      console.log(this.selectedCountry);
-      this.filteredCountries = [...this.countryList];
-    });
-    this.mmdCenterService.getMmdCenter().subscribe({
-      next: (respo) => {
-        this.mmdCentres = respo;
-      },
-      error: () => {},
-    });
-    this.userLoginService.userInfo$.subscribe((user) => {
-      this.userInfo = user;
-    });
-    this.normalForm.patchValue({
-      name: this.userInfo.userName,
-      email: this.userInfo.userEmail,
-      phone: this.userInfo.phone,
-      country: this.userInfo.country,
-      userId: this.userInfo.userId,
-    });
-
-    this.mmdSignalForm.patchValue({
-      name: this.userInfo.userName,
-      email: this.userInfo.userEmail,
-      phone: this.userInfo.phone,
-      country: this.userInfo.country,
-      userId: this.userInfo.userId,
-    });
-    this.mmdSignalForm.get('userId')?.setValue(this.userInfo.userId);
-
-    this.seoService.updateMetaTags({
-      title: 'Morse Monk - Enroll for class',
-      description:
-        'Morse Monk is a platform that helps you learn Morse Code in a fun and interactive way. Whether you are a beginner or an advanced learner, Morse Monk has got you covered.',
-      keywords:
-        'Morse, Online, Interactive, Classes, Lesson, MMD signal exam, Ham radio exam, Morse visual signal, Reception, Tool for sending morse message',
-    });
-  }
+      this.userLoginService.userInfo$.subscribe((user) => {
+        this.userInfo = user;
+      });
+      this.normalForm.patchValue({
+        name: this.userInfo.userName,
+        email: this.userInfo.userEmail,
+        phone: this.userInfo.phone,
+        country: this.userInfo.country,
+        userId: this.userInfo.userId,
+      });
+  
+      this.mmdSignalForm.patchValue({
+        name: this.userInfo.userName,
+        email: this.userInfo.userEmail,
+        phone: this.userInfo.phone,
+        country: this.userInfo.country,
+        userId: this.userInfo.userId,
+      });
+      this.mmdSignalForm.get('userId')?.setValue(this.userInfo.userId);
+  
+      this.seoService.updateMetaTags({
+        title: 'Morse Monk - Enroll for class',
+        description:
+          'Morse Monk is a platform that helps you learn Morse Code in a fun and interactive way. Whether you are a beginner or an advanced learner, Morse Monk has got you covered.',
+        keywords:
+          'Morse, Online, Interactive, Classes, Lesson, MMD signal exam, Ham radio exam, Morse visual signal, Reception, Tool for sending morse message',
+      });
+    }
 
   get currentForm(): FormGroup {
     return this.selectedClassType === 'normal'
@@ -217,40 +224,41 @@ export class EnrollClassComponent {
 
   captchaToken: string = '';
 
-  siteKey: string = '6LcVd44rAAAAACGim4Lov0toCQXWllvM2y7K7VI9';
+  siteKey: string = '6LeaK5srAAAAAI4faW-JVN725LmwbYVPN7loFwUr';
   onCaptchaResolved(event: any) {
-    if (typeof grecaptcha !== 'undefined') {
-      grecaptcha.ready(() => {
-        grecaptcha
-          .execute(this.siteKey, {
-            action: 'submit',
-          })
-          .then((token: string) => {
-            console.log('token', token);
-            this.captchaToken = token;
-          });
-      });
-    } else {
-      console.error('reCaptcha script not loaded');
+    console.log('Captcha resolved:', event);
+    if(event){
+      
+      // this.captchaToken = !this.captchaToken;
+      this.verifyToken(event);
     }
   }
+onCaptchaExpired() {
 
-  verifyToken() {
-    if (!this.captchaToken) {
-      alert('CAPTCHA not comleted');
-    }
-    this.reCaptchaService.postReCaptcha(this.captchaToken).subscribe({
-      next: (response: any) => {
-        console.log('Verification success:', response);
-      },
-      error: (error: any) => {
-        alert('Form submitted failed');
-      },
-    });
+  // this.captchaToken = !this.captchaToken;
+  console.log('Captcha expired');
+  
+}
+  verifyToken(token:any) {
+ console.log(token)
+this.captchaToken=token;
   }
 
   public onSubmit(event: Event) {
-    const amount = this.normalForm.value.country === 'India' ? 2500 : 40;
+  this.reCaptchaService.postReCaptcha(this.captchaToken).subscribe({
+      next: (response: any) => {
+        console.log('Verification success:', response);
+this.submitForm(event);
+      },
+      error: (error: any) => {
+         alert('Captcha required..');
+      
+      },
+    });
+   
+  }
+  private submitForm(event:any){
+     const amount = this.normalForm.value.country === 'India' ? 2500 : 40;
     if (this.selectedClassType === 'normal') {
       this.normalForm.patchValue({
         ...this.normalForm.value,

@@ -14,7 +14,7 @@
       </h1>
     </div>
 
-    <div class="grid md:grid-cols-2 gap-10">
+    <div class="grid gap-10">
       <!-- Contact Info -->
       <div
         class="bg-white rounded-xl p-8 shadow-md border border-[#dac7a0] space-y-6"
@@ -47,6 +47,7 @@
         method="POST"
         aria-label="Contact form"
         [formGroup]="emailForm"
+        (ngSubmit)="sendEmail()"
       >
         <h2 class="text-2xl font-heading mb-4">Send a Message</h2>
 
@@ -54,7 +55,7 @@
         <input
           type="hidden"
           name="_subject"
-          value="New message from Morse Monk Website"
+          formControlName="subject"
         />
         <input type="hidden" name="_captcha" value="false" />
         <input type="hidden" name="_template" value="box" />
@@ -135,9 +136,8 @@
         <!-- Submit -->
         <div class="text-center">
           <button
-          [disabled]="emailForm.invalid && !isValid"
+          [disabled]="emailForm.invalid"
             type="submit"
-            (click)="sendEmail()"
             class="bg-ink disabled:cursor-not-allowed text-white font-heading px-6 py-3 rounded-full shadow hover:bg-[#3e3020] transition-all"
           >
             📬 Send Message

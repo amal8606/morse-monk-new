@@ -391,7 +391,7 @@
                       class="bg-white mt-2 p-3 rounded-lg text-center border border-yellow-800"
                     >
                       <img
-                        src="/gpay_qr.jpeg"
+                        src="/gpay_qr.jpg"
                         alt="GPay QR Code"
                         class="mx-auto w-full h-96 object-contain"
                       />
@@ -440,16 +440,17 @@
               </div>
               <div class="flex justify-center items-center mt-4">
                 <ngx-recaptcha2
-                  [siteKey]="siteKey"
-                  (success)="onCaptchaResolved(siteKey)"
-                ></ngx-recaptcha2>
+                *ngIf="isBrowser"
+  [siteKey]="siteKey"
+  (success)="onCaptchaResolved($event)"
+></ngx-recaptcha2>
               </div>
 
               <!-- Submit Button -->
               <button
                 *ngIf="!isLoading"
                 mat-raised-button
-                [disabled]="!normalFormFeePaid.valid || !captchaToken"
+                [disabled]="!normalFormFeePaid.valid"
                 class="bg-[rgb(94,75,43)] hover:bg-[#997950] text-white font-heading px-6 py-2 rounded mt-6 w-full sm:w-auto"
                 (click)="onSubmit($event)"
               >
