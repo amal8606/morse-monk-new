@@ -1,19 +1,30 @@
-
 import { CommonModule } from '@angular/common';
-import { Component, Inject, makeStateKey, PLATFORM_ID, TransferState } from '@angular/core';
+import {
+  Component,
+  Inject,
+  makeStateKey,
+  PLATFORM_ID,
+  TransferState,
+} from '@angular/core';
 import { MmdCenterService } from '../../../../_core/http/api/mmdCenter.service';
 import { AddMmdCenterComponent } from './component/add-mmd-center/add-mmd-center.component';
 import { EditMmdCenterComponent } from './component/edit-mmd-center/edit-mmd-center.component';
 
 import { isPlatformServer } from '@angular/common';
 import { ToastrService } from 'ngx-toastr';
+import { FallbackPipe } from '../../../../_shared/pipes/fallback.pipe';
 
 const MMD_CENTERS_KEY = makeStateKey<any>('mmd-centers');
 
 @Component({
   selector: 'app-mmd-center',
   standalone: true,
-  imports: [CommonModule, AddMmdCenterComponent, EditMmdCenterComponent],
+  imports: [
+    CommonModule,
+    AddMmdCenterComponent,
+    EditMmdCenterComponent,
+    FallbackPipe,
+  ],
   templateUrl: './mmd-center.component.html',
 })
 export class MmdCenterComponent {
@@ -27,7 +38,7 @@ export class MmdCenterComponent {
     private readonly mmdCenterService: MmdCenterService,
     private readonly transferState: TransferState,
     @Inject(PLATFORM_ID) private platformId: Object,
-    private toaster:ToastrService
+    private toaster: ToastrService
   ) {}
 
   ngOnInit() {
@@ -58,7 +69,7 @@ export class MmdCenterComponent {
     this.loadingMmdCenter.add(centerId);
     this.mmdCenterService.deleteMmdCenter(centerId).subscribe({
       next: () => {
-        this.toaster.success("success")
+        this.toaster.success('success');
         this.mmdCenters = this.mmdCenters.filter(
           (a: any) => a.centerId !== centerId
         );
@@ -66,7 +77,7 @@ export class MmdCenterComponent {
         this.getMmdCenter(); // refetch
       },
       error: () => {
-        this.toaster.error("error, please try agian later");
+        this.toaster.error('error, please try agian later');
         this.loadingMmdCenter.delete(centerId);
       },
     });

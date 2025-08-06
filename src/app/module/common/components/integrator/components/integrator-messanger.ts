@@ -1,4 +1,4 @@
-import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import {
   ChangeDetectorRef,
   Component,
@@ -6,7 +6,6 @@ import {
   HostListener,
   inject,
   OnInit,
-  PLATFORM_ID,
   ViewChild,
 } from '@angular/core';
 import {
@@ -33,7 +32,7 @@ interface ToneSegment {
 export class IntegratorMessangerComponent implements OnInit {
   public integratorSevice = inject(SubscriptionService);
   public router = inject(Router);
-  public userInfo:any={};
+  public userInfo = JSON.parse(sessionStorage.getItem('userInfo') || '');
   flashActive: boolean = false;
   audioCtx: AudioContext | null = null;
   oscillator: OscillatorNode | null = null;
@@ -50,7 +49,7 @@ export class IntegratorMessangerComponent implements OnInit {
   mediaRecorder: any;
   audioChunks: Blob[] = [];
   private navSub!: Subscription;
-   private platformId = inject(PLATFORM_ID);
+  // private platformId = inject(PLATFORM_ID);
   constructor(private route: Router, private cdr: ChangeDetectorRef) {
     this.navSub = this.route.events.subscribe((event) => {
       if (event instanceof NavigationStart) {
@@ -89,9 +88,6 @@ export class IntegratorMessangerComponent implements OnInit {
     }
   }
   ngOnInit() {
-       if (isPlatformBrowser(this.platformId)) {
-      this.userInfo = JSON.parse(sessionStorage.getItem('userInfo') || '{}');
-    }
     this.integratorSevice
       .isSubscriptionActive(this.userInfo?.userId)
       .subscribe({

@@ -3,16 +3,18 @@ import { Component } from '@angular/core';
 import { UserService } from '../../../../_core/http/api/user.service';
 import { EditUserComponent } from './component/edit-user/edit-user.component';
 import { ToastrService } from 'ngx-toastr';
+import { FallbackPipe } from '../../../../_shared/pipes/fallback.pipe';
 
 @Component({
   selector: 'app-user',
   standalone: true,
-  imports: [CommonModule, EditUserComponent],
+  imports: [CommonModule, EditUserComponent, FallbackPipe],
   templateUrl: './user.component.html',
 })
 export class UserComponent {
-  constructor(private readonly userService: UserService,
-    private toaster:ToastrService
+  constructor(
+    private readonly userService: UserService,
+    private toaster: ToastrService
   ) {}
 
   public users: any[] = [];
@@ -40,11 +42,11 @@ export class UserComponent {
         this.users = this.users.filter((a: any) => a.id !== id);
         this.loadingUser.delete(id);
         this.getUser();
-        this.toaster.success("Success");
+        this.toaster.success('Success');
       },
       error: () => {
         this.loadingUser.clear();
-        this.toaster.error("error, please try agian later");
+        this.toaster.error('error, please try agian later');
       },
     });
   }

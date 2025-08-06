@@ -61,6 +61,7 @@
       </button>
       <button
         *ngIf="userInfo.userId"
+        [disabled]="!userInfo.userId"
         type="button"
         class="py-2 px-6 text-base font-heading rounded-lg border border-yellow-800 bg-[#5e4b2b] text-white hover:bg-[#997950] transition-all"
         (click)="logOut()"
@@ -133,6 +134,7 @@
 
       <button
         *ngIf="userInfo.userId"
+        [disabled]="!userInfo.userId"
         type="button"
         class="py-2 px-4 text-base font-heading rounded-lg border border-yellow-800 bg-red-700 text-white hover:bg-red-600 transition-all"
         (click)="logOut(); toggleMobileMenu()"
