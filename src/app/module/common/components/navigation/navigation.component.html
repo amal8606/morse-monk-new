@@ -21,33 +21,39 @@
     <!-- Desktop Nav Links -->
     <div class="hidden md:flex gap-6 items-center text-lg font-medium text-ink">
       <button
-        class="hover:text-purple-800 font-heading transition"
+
+        class="hover:text-[#5e4b2b] font-heading transition"
         (click)="scrollToSection('home')"
+        [class.active-link]="isActiveFragment('home')"
       >
         Home
       </button>
       <button
-        class="hover:text-purple-800 font-heading transition"
+        class="hover:text-[#5e4b2b] font-heading transition"
         (click)="scrollToSection('about')"
+        [class.active-link]="isActiveFragment('about')"
       >
         About
       </button>
       <button
-        class="hover:text-purple-800 font-heading transition"
+        class="hover:text-[#5e4b2b] font-heading transition"
         (click)="scrollToSection('contact')"
+        [class.active-link]="isActiveFragment('contact')"
       >
         Contact
       </button>
       <button
-        class="hover:text-purple-800 font-heading transition"
+        class="hover:text-[#5e4b2b] font-heading transition"
         (click)="navigateTo('/announcement')"
+         [class.active-link]="isActivePage('/announcement')"
       >
         Announcements
       </button>
       <button
         *ngIf="userInfo?.isActive"
-        class="hover:text-purple-800 font-heading transition"
+        class="hover:text-[#5e4b2b] font-heading transition"
         (click)="navigateTo('/message')"
+          [class.active-link]="isActivePage('/message')"
       >
         Integrator
       </button>
@@ -93,32 +99,37 @@
     <div class="flex flex-col gap-4 text-lg font-medium text-ink">
       <button
         (click)="scrollToSection('home'); toggleMobileMenu()"
-        class="hover:text-purple-800 font-heading"
+        class="hover:text-[#5e4b2b] font-heading"
+        [class.active-link]="isActiveFragment('home')"
       >
         Home
       </button>
       <button
         (click)="scrollToSection('about'); toggleMobileMenu()"
-        class="hover:text-purple-800 font-heading"
+        class="hover:text-[#5e4b2b] font-heading"
+        [class.active-link]="isActiveFragment('about')"
       >
         About
       </button>
       <button
         (click)="scrollToSection('contact'); toggleMobileMenu()"
-        class="hover:text-purple-800 font-heading"
+        class="hover:text-[#5e4b2b] font-heading"
+        [class.active-link]="isActiveFragment('contact')"
       >
         Contact
       </button>
       <button
-        class="hover:text-purple-800 font-heading"
+        class="hover:text-[#5e4b2b] font-heading"
         (click)="navigateTo('/announcement'); toggleMobileMenu()"
+        [class.active-link]="isActivePage('/announcement')"
       >
         Announcements
       </button>
       <button
         *ngIf="userInfo?.isActive"
-        class="hover:text-purple-800 font-heading transition"
+        class="hover:text-[#5e4b2b] font-heading transition"
         (click)="navigateTo('/message'); toggleMobileMenu()"
+        [class.active-link]="isActivePage('/message')"
       >
         Integrator
       </button>

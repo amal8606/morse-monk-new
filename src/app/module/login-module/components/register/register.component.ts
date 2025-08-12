@@ -139,11 +139,6 @@ export class RegisterComponent {
       return;
     }
 
-    const phoneNumber = `${this.selectedCode}${
-      this.registrationForm.get('phoneNumber')?.value
-    }`;
-    this.registrationForm.get('phoneNumber')?.setValue(phoneNumber);
-
     this.formData = {
       ...this.registrationForm.value,
       createdAt: new Date(),
@@ -160,6 +155,8 @@ export class RegisterComponent {
       error: (error) => {
         if (error.status === 409) {
           this.toastr.error('Email or phone number already in use.');
+        }else{
+          this.toastr.error('Registration failed. Please try again.');
         }
         this.isLoading = false;
       },

@@ -36,3 +36,9 @@
 html {
   scroll-padding-top: 6rem; // adjust based on actual navbar height
 }
+.active-link {
+  color: #5e4b2b; /* ink color */
+  font-weight: bold;
+  border-bottom: 2px solid #5e4b2b;
+}
+
