@@ -33,6 +33,7 @@
             <mat-radio-button value="bankTransfer"
               >Bank Transfer</mat-radio-button
             >
+            <mat-radio-button value="payLater">Pay Later</mat-radio-button>
           </mat-radio-group>
         </div>
 
@@ -72,7 +73,7 @@
           </ul>
         </div>
 
-        <div>
+        <div *ngIf="normalForm.get('paymentMethod')?.value != 'payLater'">
           <!-- Fee Paid Date -->
           <label class="block mb-1 font-semibold">Fee paid date</label>
           <mat-form-field appearance="fill" class="w-full">
@@ -93,11 +94,11 @@
     </div>
     <!-- Submit Button -->
     <div class="flex justify-center items-center mt-4">
-       <ngx-recaptcha2
-       *ngIf="isBrowser"
-  [siteKey]="siteKey"
-  (success)="onCaptchaResolved($event)"
-></ngx-recaptcha2>
+      <ngx-recaptcha2
+        *ngIf="isBrowser"
+        [siteKey]="siteKey"
+        (success)="onCaptchaResolved($event)"
+      ></ngx-recaptcha2>
     </div>
 
     <!-- Submit Button -->
