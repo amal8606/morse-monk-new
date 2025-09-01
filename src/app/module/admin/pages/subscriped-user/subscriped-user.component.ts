@@ -37,6 +37,7 @@ export class SubscripedUserComponent {
 
   public status: any = 'pending';
   public isActive: any = 0;
+  public isLoading: boolean = false;
   ngOnInit() {
     this.getSubscription();
   }
@@ -53,16 +54,22 @@ export class SubscripedUserComponent {
     this.getSubscription();
   }
   public getSubscription() {
+    this.isLoading = true;
     this.status = this.selectedType;
 
     this.subscriptionService
       .getSubscription(this.status, this.isActive)
       .subscribe({
         next: (respo) => {
+          this.isLoading = false;
           this.users = respo;
         },
-        error: () => {},
-        complete: () => {},
+        error: () => {
+          this.isLoading = false;
+        },
+        complete: () => {
+          this.isLoading = false;
+        },
       });
   }
 
@@ -135,5 +142,12 @@ export class SubscripedUserComponent {
   public closeEditSubscripedUser() {
     this.showEditSubscripedUser = false;
     this.getSubscription();
+  }
+  getCurrencyCode(country: string): string {
+    if (country == 'India') {
+      return 'INR';
+    } else {
+      return 'USD';
+    }
   }
 }

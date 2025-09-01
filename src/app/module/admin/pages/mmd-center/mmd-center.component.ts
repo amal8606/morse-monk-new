@@ -40,12 +40,13 @@ export class MmdCenterComponent {
     @Inject(PLATFORM_ID) private platformId: Object,
     private toaster: ToastrService
   ) {}
-
+  public isLoading: boolean = false;
   ngOnInit() {
     this.getMmdCenter();
   }
 
   getMmdCenter() {
+    this.isLoading = true;
     if (this.transferState.hasKey(MMD_CENTERS_KEY)) {
       // ✅ Use cached data from server-side rendering
       this.mmdCenters = this.transferState.get(MMD_CENTERS_KEY, null);
@@ -55,12 +56,15 @@ export class MmdCenterComponent {
       this.mmdCenterService.getMmdCenter().subscribe({
         next: (respo) => {
           this.mmdCenters = respo;
+          this.isLoading = false;
           // Only set state if running on the server
           if (isPlatformServer(this.platformId)) {
             this.transferState.set(MMD_CENTERS_KEY, respo);
           }
         },
-        error: () => {},
+        error: () => {
+          this.isLoading = false;
+        },
       });
     }
   }
