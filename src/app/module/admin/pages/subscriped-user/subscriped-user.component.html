@@ -151,7 +151,11 @@
                   {{ user.duration | fallback : "N/A" }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                  {{ user.amount | currency : "USD" | fallback : "N/A" }}
+                  {{
+                    user.amount
+                      | currency : getCurrencyCode(user.country)
+                      | fallback : "N/A"
+                  }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
                   {{ user.createdAt | date : "dd/MM/yyyy" | fallback : "N/A" }}
@@ -186,7 +190,7 @@
                   class="px-6 py-4 whitespace-nowrap text-end text-sm font-medium"
                 >
                   <button
-                  [disabled]="selectedType=='confirmed'"
+                    [disabled]="selectedType == 'confirmed'"
                     type="button"
                     (click)="openEditSubscripedUser(user, user.status)"
                     class="inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-red-600 hover:text-red-800 focus:outline-hidden focus:text-red-800 disabled:opacity-50 disabled:pointer-events-none-400-400"
@@ -209,6 +213,24 @@
         </div>
       </div>
     </div>
+  </div>
+  <div *ngIf="isLoading" class="flex justify-center items-center py-10">
+    <svg class="animate-spin h-5 w-5 mr-2 inline" viewBox="0 0 24 24">
+      <circle
+        class="opacity-25"
+        cx="12"
+        cy="12"
+        r="10"
+        stroke="currentColor"
+        stroke-width="4"
+      ></circle>
+      <path
+        class="opacity-75"
+        fill="currentColor"
+        d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 100 16v-4l-3 3 3 3v-4a8 8 0 01-8-8z"
+      />
+    </svg>
+    Loading...
   </div>
 </section>
 <app-edit-subscriped-user

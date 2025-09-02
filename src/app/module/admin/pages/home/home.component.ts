@@ -42,6 +42,7 @@ export class AdminHomeComponent {
     private toaster: ToastrService
   ) {}
 
+  public isLoading: boolean = false;
   ngOnInit() {
     this.bookingFunction(this.selectedTypeStatus);
   }
@@ -49,8 +50,11 @@ export class AdminHomeComponent {
     this.bookingFunction(this.selectedTypeStatus);
   }
   public bookingFunction(status: any) {
+    this.isLoading = true;
     this.booikngService.getBooking(status).subscribe({
       next: (response) => {
+        this.isLoading = false;
+
         this.allPaymentsPendingUser = response;
         this.enrolUsers = response.filter(
           (user: any) =>
@@ -75,7 +79,9 @@ export class AdminHomeComponent {
         this.mmdPendingPaymentsCount = this.mmdUsers.length;
         this.demoCount = this.demoUsers.length;
       },
-      error: (error) => {},
+      error: (error) => {
+        this.isLoading = false;
+      },
     });
   }
 
@@ -200,5 +206,13 @@ export class AdminHomeComponent {
   public closeConfirmModal() {
     this.showConfirm = false;
     this.bookingFunction(this.selectedTypeStatus);
+  }
+
+  getCurrencyCode(country: string): string {
+    if (country == 'India') {
+      return 'INR';
+    } else {
+      return 'USD';
+    }
   }
 }

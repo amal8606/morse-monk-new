@@ -24,12 +24,18 @@ export class UserComponent {
   }
 
   getUser() {
+    this.isLoading = true;
     this.userService.getUsers().subscribe({
       next: (respo) => {
         this.users = respo;
+        this.isLoading = false;
       },
-      error: () => {},
-      complete: () => {},
+      error: () => {
+        this.isLoading = false;
+      },
+      complete: () => {
+        this.isLoading = false;
+      },
     });
   }
 
@@ -63,5 +69,13 @@ export class UserComponent {
   public closeAddCenterModal() {
     this.isEditModalOpen = false;
     this.getUser();
+  }
+  public isLoading: boolean = false;
+  getCurrencyCode(country: string): string {
+    if (country == 'India') {
+      return 'INR';
+    } else {
+      return 'USD';
+    }
   }
 }

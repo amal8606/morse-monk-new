@@ -12,8 +12,9 @@ import { ToastrService } from 'ngx-toastr';
   templateUrl: './announcements.component.html',
 })
 export class AnnouncementsComponent {
-  constructor(private readonly announcementService: AnnouncementService,
-    private toaster:ToastrService
+  constructor(
+    private readonly announcementService: AnnouncementService,
+    private toaster: ToastrService
   ) {}
   public showAddAnnouncement: boolean = false;
   public showEditAnnouncement: boolean = false;
@@ -21,22 +22,24 @@ export class AnnouncementsComponent {
 
   public announcements: any;
   ngOnInit() {
-    this.announcementService.getAnnouncement().subscribe({
-      next: (respo) => {
-        this.announcements = respo;
-      },
-      error: () => {},
-      complete: () => {},
-    });
+    this.getAnnouncement();
   }
 
   public getAnnouncement() {
+    this.isLoading = true;
+
     this.announcementService.getAnnouncement().subscribe({
       next: (respo) => {
+        this.isLoading = false;
+
         this.announcements = respo;
       },
-      error: () => {},
-      complete: () => {},
+      error: () => {
+        this.isLoading = false;
+      },
+      complete: () => {
+        this.isLoading = false;
+      },
     });
   }
 

@@ -70,7 +70,7 @@ export class EnrollClassComponent {
     private readonly mmdCenterService: MmdCenterService,
     private readonly userLoginService: UserLoginService,
     private readonly reCaptchaService: ReCaptchaService,
-    private readonly toaster:ToastrService
+    private readonly toaster: ToastrService
   ) {}
   selectedDates: Date[] = [];
   selectedClassType: string = 'normal';
@@ -92,7 +92,7 @@ export class EnrollClassComponent {
     country: new FormControl('', Validators.required),
     amount: new FormControl(''),
     paidDate: new FormControl(''),
-    paymentMethod: new FormControl(''),
+    paymentMethod: new FormControl('gpay'),
     status: new FormControl(''),
     bookingDate: new FormControl(''),
     userId: new FormControl(null),
@@ -116,58 +116,58 @@ export class EnrollClassComponent {
     bookingDate: new FormControl(''),
     amount: new FormControl(''),
     paidDate: new FormControl(''),
-    paymentMethod: new FormControl(''),
+    paymentMethod: new FormControl('payLater'),
   });
-public isBrowser: boolean = false;
+  public isBrowser: boolean = false;
   public country: any;
   public userInfo: any;
   ngOnInit(): void {
-      this.isBrowser = isPlatformBrowser(this.platformId);
-      this.countryService.getCountries().subscribe((data: any[]) => {
-        this.countryList = (data || []).sort((a, b) => {
-          const nameA = a.name?.common || '';
-          const nameB = b.name?.common || '';
-          return nameA.localeCompare(nameB);
-        });
-        this.selectedCountry = this.countryList?.find((country: any) => {
-          return country.name?.common === this.userInfo.country;
-        });
-        this.filteredCountries = [...this.countryList];
+    this.isBrowser = isPlatformBrowser(this.platformId);
+    this.countryService.getCountries().subscribe((data: any[]) => {
+      this.countryList = (data || []).sort((a, b) => {
+        const nameA = a.name?.common || '';
+        const nameB = b.name?.common || '';
+        return nameA.localeCompare(nameB);
       });
-      this.mmdCenterService.getMmdCenter().subscribe({
-        next: (respo) => {
-          this.mmdCentres = respo;
-        },
-        error: () => {},
+      this.selectedCountry = this.countryList?.find((country: any) => {
+        return country.name?.common === this.userInfo.country;
       });
-      this.userLoginService.userInfo$.subscribe((user) => {
-        this.userInfo = user;
-      });
-      this.normalForm.patchValue({
-        name: this.userInfo.userName,
-        email: this.userInfo.userEmail,
-        phone: this.userInfo.phone,
-        country: this.userInfo.country,
-        userId: this.userInfo.userId,
-      });
-  
-      this.mmdSignalForm.patchValue({
-        name: this.userInfo.userName,
-        email: this.userInfo.userEmail,
-        phone: this.userInfo.phone,
-        country: this.userInfo.country,
-        userId: this.userInfo.userId,
-      });
-      this.mmdSignalForm.get('userId')?.setValue(this.userInfo.userId);
-  
-      this.seoService.updateMetaTags({
-        title: 'Morse Monk - Enroll for class',
-        description:
-          'Morse Monk is a platform that helps you learn Morse Code in a fun and interactive way. Whether you are a beginner or an advanced learner, Morse Monk has got you covered.',
-        keywords:
-          'Morse, Online, Interactive, Classes, Lesson, MMD signal exam, Ham radio exam, Morse visual signal, Reception, Tool for sending morse message',
-      });
-    }
+      this.filteredCountries = [...this.countryList];
+    });
+    this.mmdCenterService.getMmdCenter().subscribe({
+      next: (respo) => {
+        this.mmdCentres = respo;
+      },
+      error: () => {},
+    });
+    this.userLoginService.userInfo$.subscribe((user) => {
+      this.userInfo = user;
+    });
+    this.normalForm.patchValue({
+      name: this.userInfo.userName,
+      email: this.userInfo.userEmail,
+      phone: this.userInfo.phone,
+      country: this.userInfo.country,
+      userId: this.userInfo.userId,
+    });
+
+    this.mmdSignalForm.patchValue({
+      name: this.userInfo.userName,
+      email: this.userInfo.userEmail,
+      phone: this.userInfo.phone,
+      country: this.userInfo.country,
+      userId: this.userInfo.userId,
+    });
+    this.mmdSignalForm.get('userId')?.setValue(this.userInfo.userId);
+
+    this.seoService.updateMetaTags({
+      title: 'Morse Monk - Enroll for class',
+      description:
+        'Morse Monk is a platform that helps you learn Morse Code in a fun and interactive way. Whether you are a beginner or an advanced learner, Morse Monk has got you covered.',
+      keywords:
+        'Morse, Online, Interactive, Classes, Lesson, MMD signal exam, Ham radio exam, Morse visual signal, Reception, Tool for sending morse message',
+    });
+  }
 
   get currentForm(): FormGroup {
     return this.selectedClassType === 'normal'
@@ -223,35 +223,30 @@ public isBrowser: boolean = false;
 
   siteKey: string = '6LeaK5srAAAAAI4faW-JVN725LmwbYVPN7loFwUr';
   onCaptchaResolved(event: any) {
-    if(event){
-      
+    if (event) {
       // this.captchaToken = !this.captchaToken;
       this.verifyToken(event);
     }
   }
-onCaptchaExpired() {
-
-  // this.captchaToken = !this.captchaToken;
-  
-}
-  verifyToken(token:any) {
-this.captchaToken=token;
+  onCaptchaExpired() {
+    // this.captchaToken = !this.captchaToken;
+  }
+  verifyToken(token: any) {
+    this.captchaToken = token;
   }
 
   public onSubmit(event: Event) {
-  this.reCaptchaService.postReCaptcha(this.captchaToken).subscribe({
+    this.reCaptchaService.postReCaptcha(this.captchaToken).subscribe({
       next: (response: any) => {
-this.submitForm(event);
+        this.submitForm(event);
       },
       error: (error: any) => {
-         alert('Captcha required..');
-      
+        alert('Captcha required..');
       },
     });
-   
   }
-  private submitForm(event:any){
-     const amount = this.normalForm.value.country === 'India' ? 2500 : 40;
+  private submitForm(event: any) {
+    const amount = this.normalForm.value.country === 'India' ? 2500 : 40;
     if (this.selectedClassType === 'normal') {
       this.normalForm.patchValue({
         ...this.normalForm.value,
