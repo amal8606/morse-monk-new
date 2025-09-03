@@ -35,6 +35,9 @@ export class EditAnnouncementComponent {
   }
 
   public deleteAnnouncement() {
+     if (!confirm('Are you sure to delete this Announcement?')) {
+      return;
+    }
     this.announcementService.deleteAnnouncement(this.announcement).subscribe({
       next: () => {
         this.closeModel();

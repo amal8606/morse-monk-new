@@ -42,6 +42,9 @@ export class UserComponent {
   loadingUser = new Set<number>(); // To track which announcements are being deleted
 
   deleteUser(id: any) {
+    if (!confirm('Are you sure to delete this user?')) {
+      return;
+    }
     this.loadingUser.add(id);
     this.userService.deleteUser(id).subscribe({
       next: () => {

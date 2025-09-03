@@ -26,4 +26,7 @@ export class SubscriptionService {
     public isSubscriptionActive(userId: Number) {
     return this.http.post<any>(`${environment.api}/Subscription/auth?userId=${userId}`, {});
   }
+  public deleteSubscription(id: any) {    
+    return this.http.delete<any>(`${environment.api}/Subscription/${id}`);    
+  }
 }

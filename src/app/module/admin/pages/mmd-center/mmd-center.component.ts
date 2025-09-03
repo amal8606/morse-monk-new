@@ -70,6 +70,9 @@ export class MmdCenterComponent {
   }
 
   deleteAnnouncement(centerId: any) {
+     if (!confirm('Are you sure to delete this center?')) {
+      return;
+    }
     this.loadingMmdCenter.add(centerId);
     this.mmdCenterService.deleteMmdCenter(centerId).subscribe({
       next: () => {

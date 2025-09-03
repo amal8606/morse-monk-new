@@ -8,6 +8,8 @@ import { BookingService } from '../../../../_core/http/api/booking.service';
 import { EditHomeComponent } from './component/edit-home/edit-home.component';
 import { ToastrComponentlessModule, ToastrService } from 'ngx-toastr';
 import { FallbackPipe } from '../../../../_shared/pipes/fallback.pipe';
+import { SelectionModel } from '@angular/cdk/collections';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 @Component({
   selector: 'app-home',
@@ -20,6 +22,7 @@ import { FallbackPipe } from '../../../../_shared/pipes/fallback.pipe';
     MatButtonModule,
     EditHomeComponent,
     FallbackPipe,
+    MatCheckboxModule
   ],
   templateUrl: './home.component.html',
 })
@@ -33,9 +36,11 @@ export class AdminHomeComponent {
   public users: any[] = [];
   public user: any = '';
   public selectedUser: any = '';
-
+public isLoadingStatus: boolean = false;
   public showConfirm: boolean = false;
   public isloadingStatus: boolean = false;
+  showSelect = false;
+  selection = new SelectionModel<any>(true, []);
 
   constructor(
     private readonly booikngService: BookingService,
@@ -145,7 +150,15 @@ export class AdminHomeComponent {
   };
 
   getDisplayedColumns(): string[] {
-    return this.columnDefinitions[this.selectedType];
+    let columns = this.columnDefinitions[this.selectedType] || [];
+    if (this.showSelect) {
+      return ['select', ...columns];
+    }
+    return columns;
+  }
+
+  getDynamicColumns(): string[] {
+    return this.getDisplayedColumns().filter((c) => c !== 'select');
   }
 
   getColumnHeader(column: string): string {
@@ -214,5 +227,51 @@ export class AdminHomeComponent {
     } else {
       return 'USD';
     }
+  }
+
+  toggleSelect() {
+    this.showSelect = !this.showSelect;
+    if (!this.showSelect) {
+      this.selection.clear();
+    }
+  }
+
+  /** Whether the number of selected elements matches the total number of rows. */
+  isAllSelected() {
+    const numSelected = this.selection.selected.length;
+    const numRows = this.getCurrentData().length;
+    return numSelected === numRows;
+  }
+
+  /** Selects all rows if they are not all selected; otherwise clear selection. */
+  masterToggle() {
+    this.isAllSelected()
+      ? this.selection.clear()
+      : this.getCurrentData().forEach((row) => this.selection.select(row));
+  }
+  select(row: any) {
+    return this.selection.isSelected(row);
+  }
+  deleteSelected() {
+    const ids = this.selection.selected.map((item) => item.bookingId);
+    if (ids.length === 0) {
+      this.toaster.info('No bookings selected for deletion.');
+      return;
+    }
+    this.isLoadingStatus = true;
+    this.booikngService.deleteBookings(ids).subscribe({
+      
+      next: (response) => {
+        this.toaster.success('Selected bookings deleted successfully.');
+        this.selection.clear();
+        this.bookingFunction(this.selectedTypeStatus);
+      },error: (error) => {
+        this.isLoadingStatus = false;
+        this.toaster.error('Error deleting bookings, please try again.');
+      },
+      complete: () => {
+        this.isLoadingStatus = false;
+      }
+    })
   }
 }

@@ -18,6 +18,7 @@ export class ConfirmationModelComponent {
   ) {}
   public isLoading: boolean = false;
   public deletEnquiry() {
+   console.log(this.email);
     this.emailService.deleteEnquiryEmail(this.email.id).subscribe({
       next: () => {
         this.closeModel();

@@ -32,4 +32,9 @@ export class BookingService {
       booking
     );
   }
+  public deleteBookings(ids: any) {
+    return this.http.post<any>(
+      `${environment.api}/Booking/delete`,ids
+    );
+  }
 }

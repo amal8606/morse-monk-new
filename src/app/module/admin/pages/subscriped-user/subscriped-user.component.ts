@@ -9,6 +9,7 @@ import { SubscriptionService } from '../../../../_core/http/api/subscription.ser
 import { FormsModule } from '@angular/forms';
 import { EditSubscripedUserComponent } from './component/edit-subscriped-user/edit-subscriped-user.component';
 import { FallbackPipe } from '../../../../_shared/pipes/fallback.pipe';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-subscriped-user',
@@ -32,8 +33,11 @@ export class SubscripedUserComponent {
 
   // public showModel: boolean = false;
   selectedType = 'pending';
+  loadingUser = new Set<number>(); // To track which announcements are being deleted
 
-  constructor(private readonly subscriptionService: SubscriptionService) {}
+  constructor(private readonly subscriptionService: SubscriptionService,
+    private toaster: ToastrService
+  ) {}
 
   public status: any = 'pending';
   public isActive: any = 0;
@@ -149,5 +153,26 @@ export class SubscripedUserComponent {
     } else {
       return 'USD';
     }
+  }
+    deleteUser(id: any) {
+      if (!confirm('Are you sure to delete this user?')) {
+      return;
+    }
+    this.loadingUser.add(id);
+    this. subscriptionService.deleteSubscription(id).subscribe({
+      next: () => {
+        this.loadingUser.delete(id);
+        this.getSubscription();
+        this.toaster.success('Success');
+      },
+      error: () => {
+        this.loadingUser.clear();
+        this.toaster.error('error, please try agian later');
+      },
+    });
+  }
+
+  isDeleting(centerId: number): boolean {
+    return this.loadingUser.has(centerId);
   }
 }

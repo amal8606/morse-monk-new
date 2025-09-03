@@ -29,6 +29,7 @@
       </div>
     </label>
   </div>
+  
   <div class="flex flex-col overflow-y-hidden">
     <div class="-m-1.5">
       <div class="p-1.5 min-w-full inline-block align-middle">
@@ -117,6 +118,12 @@
                   class="px-6 py-3 text-end text-xs font-medium text-gray-500 uppercase"
                 >
                   Payment Status
+                </th>
+                <th
+                  scope="col"
+                  class="px-6 py-3 text-end text-xs font-medium text-gray-500 uppercase"
+                >
+                  Action
                 </th>
               </tr>
             </thead>
@@ -207,6 +214,42 @@
                     </span>
                   </button>
                 </td>
+               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
+                     <button
+                    *ngIf="!isDeleting(user.id)"
+                    (click)="deleteUser(user.id)"
+                    class="text-red-600 hover:text-red-800 text-sm font-semibold px-3 py-2"
+                  >
+                    Delete
+                  </button>
+
+                  <!-- Spinner when deleting -->
+                  <button
+                    *ngIf="isDeleting(user.id)"
+                    class="text-red-600 text-sm font-semibold px-3 py-2"
+                    disabled
+                  >
+                    <svg
+                      class="animate-spin h-5 w-5 inline"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        class="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        stroke-width="4"
+                      ></circle>
+                      <path
+                        class="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 100 16v-4l-3 3 3 3v-4a8 8 0 01-8-8z"
+                      />
+                    </svg>
+                  </button>
+                </td> 
+              
               </tr>
             </tbody>
           </table>
